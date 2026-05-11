@@ -19,11 +19,11 @@ Future<void> main() async {
 
       await _setAppSystemPreferences();
 
+      await dotenv.load(fileName: '.env');
+
       await _initEnvironment();
 
       await _initServices();
-
-      await dotenv.load(fileName: '.env');
 
       if (kDebugMode) {
         Logger.root.level = Level.ALL;
@@ -101,6 +101,6 @@ Future<void> _initEnvironment() async {
 }
 
 Future<void> _initServices() async {
-  AppConfig.shared;
+  await AppConfig.shared.init();
   Get.put<ApiService>(ApiService());
 }

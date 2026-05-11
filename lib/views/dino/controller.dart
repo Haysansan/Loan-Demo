@@ -44,12 +44,12 @@ class DinoController extends GetxController {
 
   Future<int?> getBranchId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('branch_id');
+    return SharedPreferencesManager.getIntValue('branch_id');
   }
 
   Future<int?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('user_id');
+    return SharedPreferencesManager.getIntValue('user_id');
   }
 
   Future<void> getDeNoCo() async {

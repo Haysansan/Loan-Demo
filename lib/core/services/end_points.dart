@@ -30,7 +30,6 @@ class EndPoints {
   static String get getClient => 'loan/get_loans_repay';
   static String get getClientDisb => 'loan/get_clientDisb';
   static String get prePaid => 'loan/prerepayment/store';
-
   static String get getStaff => 'get_user';
   static String get getClientList => 'client/get_clients';
   static String get getWrittenOffList => 'report/loan/un_repayment_wo';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:apploan/core/core.dart';
 import 'package:apploan/flavor/flavor.dart';
@@ -12,7 +13,6 @@ class LoginController extends GetxController {
   final TextEditingController passCtl = TextEditingController();
 
   final RxBool isPassVisible = true.obs;
-  final RxBool isLogVaiEmail = false.obs;
 
   @override
   void onInit() {
@@ -40,13 +40,15 @@ class LoginController extends GetxController {
   Future<void> login() async {
     try {
       final Map<String, dynamic> payload = {
-        'username': usernameCtl.text,
+        'username': usernameCtl.text.replaceAll(' ', '').trim(),
         'password': passCtl.text,
       };
 
       final res = await Get.find<ApiService>().post(
         EndPoints.login,
         payload,
+        encode: false,
+        contentType: Headers.formUrlEncodedContentType,
         isShowLoading: true,
       );
 
@@ -70,7 +72,9 @@ class LoginController extends GetxController {
       final String permission = login.permission;
       final String token = login.token;
 
-      if (permission != Rule.customer.name && permission != Rule.driver.name) {
+      if (permission.isNotEmpty &&
+          permission != Rule.customer.name &&
+          permission != Rule.driver.name) {
         DialogManager.showDialog(
           title: LocaleKeys.permission.tr,
           subTitle: LocaleKeys.noPermission.tr,

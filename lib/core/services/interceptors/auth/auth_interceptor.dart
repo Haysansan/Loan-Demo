@@ -7,7 +7,9 @@ class AuthenticationInterceptor extends dio.Interceptor {
 
   @override
   void onRequest(dio.RequestOptions options, dio.RequestInterceptorHandler handler) {
-    options.headers['Authorization'] = accessToken;
+    if (accessToken.isNotEmpty) {
+      options.headers['Authorization'] = accessToken;
+    }
     super.onRequest(options, handler);
   }
 }

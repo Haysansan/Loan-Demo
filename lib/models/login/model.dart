@@ -17,12 +17,23 @@ class LoginModel {
   factory LoginModel.fromJson(Map<String, dynamic> json) {
     return LoginModel(
       token: json['token'] ?? '',
-      name: json['name'] ?? '',
+      name: json['fullname'] ?? json['name'] ?? '',
       permission: json['permission'] ?? '',
-      user_id: json['user_id'] ?? 0,
-      branch_id:json['branch_id'] ?? 0
+      user_id: _toInt(json['user_id']),
+      branch_id: _toInt(json['branch_id']),
     );
   }
+
+  static int _toInt(dynamic value) {
+    if (value is int) {
+      return value;
+    }
+    if (value is String) {
+      return int.tryParse(value) ?? 0;
+    }
+    return 0;
+  }
+
   Map<String,dynamic> toJson(){
     final Map<String,dynamic> data = new Map<String,dynamic>();
     data['token'] = this.token;

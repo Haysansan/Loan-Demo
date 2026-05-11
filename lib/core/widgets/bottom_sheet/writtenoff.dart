@@ -26,8 +26,7 @@ class WrittenoffSheet extends StatelessWidget {
   final WrittenoffController startCtl = Get.find<WrittenoffController>();
   // show user_id from login
   Future<int?> getUserId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? user_id = prefs.getInt('user_id');
+    int? user_id = await SharedPreferencesManager.getIntValue('user_id');
     return user_id;
   }
 

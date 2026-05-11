@@ -7,6 +7,17 @@ class SharedPreferencesManager {
 
   static Future<dynamic> get(String key) async => (await _instance).get(key);
 
+  static Future<int?> getIntValue(String key) async {
+    final value = (await _instance).get(key);
+    if (value is int) {
+      return value;
+    }
+    if (value is String) {
+      return int.tryParse(value);
+    }
+    return null;
+  }
+
   static Future<bool> remove(String key) async => (await _instance).remove(key);
 
   static Future<bool> setValue(String key, dynamic value) async {

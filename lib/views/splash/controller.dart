@@ -30,15 +30,13 @@ class SplashController extends GetxController
 
   // show branch_id for login
   Future<int?> getbranchId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? branchId = prefs.getInt('branch_id');
+    int? branchId = await SharedPreferencesManager.getIntValue('branch_id');
     return branchId;
   }
 
   // show user_id from login
   Future<int?> getUserId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? user_id = prefs.getInt('user_id');
+    int? user_id = await SharedPreferencesManager.getIntValue('user_id');
     return user_id;
   }
 

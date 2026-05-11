@@ -71,32 +71,18 @@ class LoginView extends GetView<LoginController> {
                               SizedBox(height: 10.0),
                               // Phone number label in Khmer
                               Text(
-                                LocaleKeys.loginWithUsernameEmail.tr,
+                                LocaleKeys.phoneNumber.tr,
                                 style: TextStyle(fontSize: 14),
                               ),
 
                               SizedBox(height: 5.0), // Vertical spacing
-                              // Phone number or email input field
-                              Obx(() {
-                                return CustomTextField(
-                                  controller: controller.usernameCtl,
-                                  hintText:
-                                      controller.isLogVaiEmail.value
-                                          ? LocaleKeys.email.tr
-                                          : LocaleKeys.phoneNumber.tr,
-                                  validator: (text) {
-                                    if (controller.isLogVaiEmail.value) {
-                                      return FormValidator.email(
-                                        text,
-                                      ); // Validate email
-                                    } else {
-                                      return FormValidator.phoneNumber(
-                                        text,
-                                      ); // Validate phone number
-                                    }
-                                  },
-                                );
-                              }),
+                              CustomTextField(
+                                controller: controller.usernameCtl,
+                                hintText: LocaleKeys.phoneNumber.tr,
+                                validator: (text) {
+                                  return FormValidator.phoneNumber(text);
+                                },
+                              ),
 
                               UIConstants.spacing.height, // Vertical spacing
                               // Password label in Khmer
@@ -130,28 +116,7 @@ class LoginView extends GetView<LoginController> {
                                 ),
                               ),
 
-                              UIConstants.spacing.height, // Vertical spacing
-                              // Toggle between login with email/phone number
-                              InkWell(
-                                onTap: () {
-                                  controller.isLogVaiEmail.value =
-                                      !controller.isLogVaiEmail.value;
-                                },
-                                child: Container(
-                                  height: 24,
-                                  alignment: Alignment.center,
-                                  child: Obx(
-                                    () => Text(
-                                      controller.isLogVaiEmail.value
-                                          ? LocaleKeys.loginWithPhoneNumber.tr
-                                          : LocaleKeys
-                                              .loginWithUsernameEmail
-                                              .tr,
-                                      style: AppTextStyle.normalPrimaryRegular,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              UIConstants.spacing.height,
                               Column(
                                 children: [
                                   // Login button

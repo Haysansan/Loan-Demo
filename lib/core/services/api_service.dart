@@ -14,8 +14,7 @@ class ApiService extends GetxService {
 
   Logger get logger => Logger.root;
 
-  Future<d.Dio> _dioClient({bool? isShowLoading}) async {
-
+  Future<d.Dio> _dioClient({bool? isShowLoading, bool requiresAuth = true}) async {
     final client = d.Dio(
       d.BaseOptions(
         followRedirects: false,
@@ -35,7 +34,9 @@ class ApiService extends GetxService {
 
     client.interceptors.add(LoadingInterceptor(isShow: isShowLoading ?? false));
 
-    client.interceptors.add(AuthenticationInterceptor(accessToken: AppConfig.shared.token));
+    if (requiresAuth) {
+      client.interceptors.add(AuthenticationInterceptor(accessToken: AppConfig.shared.token));
+    }
 
     // DO NOT change order of these interceptors
     client.interceptors.add(
@@ -90,9 +91,13 @@ class ApiService extends GetxService {
         String? baseUrl,
         bool encode = true,
         Map<String, dynamic>? cusHeaders,
+        String? contentType,
         bool? isShowLoading,
       }) async {
-    final client = await _dioClient(isShowLoading: isShowLoading);
+    final client = await _dioClient(
+      isShowLoading: isShowLoading,
+      requiresAuth: path != EndPoints.login,
+    );
 
     if (baseUrl != null) {
       client.options.baseUrl = baseUrl;
@@ -100,6 +105,10 @@ class ApiService extends GetxService {
 
     if (cusHeaders != null) {
       client.options.headers.addEntries(cusHeaders.entries);
+    }
+
+    if (contentType != null) {
+      client.options.contentType = contentType;
     }
 
     int attempt = 0; // ✅ ADDED: track retry attempts

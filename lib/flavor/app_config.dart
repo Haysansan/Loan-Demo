@@ -4,9 +4,7 @@ import 'package:get/get.dart';
 import 'package:apploan/core/core.dart';
 
 class AppConfig {
-  AppConfig._() {
-    _getToken();
-  }
+  AppConfig._();
 
   static final _instance = AppConfig._();
   static AppConfig get shared => _instance;
@@ -14,10 +12,12 @@ class AppConfig {
   String get baseUrl => dotenv.env[EnvKey.baseUrl.value] ?? '';
 
   String _token = '';
-  String get token => 'Bearer $_token';
+  String get token => _token.isEmpty ? '' : 'Bearer $_token';
   set token(String value) => _token = value;
 
   bool isDeliveryTapOpened = false;
+
+  Future<void> init() => _getToken();
 
   Future<void> _getToken() async {
     _token = await SharedPreferencesManager.get(Credential.token.name) ?? '';
