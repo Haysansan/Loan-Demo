@@ -310,6 +310,37 @@ class DatabaseHelper {
 
   Future<int> insertCollected(Map<String, dynamic> row) async {
     Database db = await instance.database;
+
+    final rowId = int.tryParse(row['id']?.toString() ?? '0') ?? 0;
+
+    final existing = await db.query(
+      'Collected',
+      where: 'id = ?',
+      whereArgs: [rowId],
+    );
+
+    if (existing.isNotEmpty) {
+      final existingRecord = existing.first;
+
+      double existingAmt =
+          double.tryParse(
+            existingRecord['total_repayment']?.toString() ?? '0',
+          ) ??
+          0;
+      double newAmt =
+          double.tryParse(row['total_repayment']?.toString() ?? '0') ?? 0;
+
+      // Always sum — never lose previous amount
+      row['total_repayment'] = existingAmt + newAmt;
+
+      return await db.update(
+        'Collected',
+        row,
+        where: 'id = ?',
+        whereArgs: [rowId],
+      );
+    }
+
     return await db.insert('Collected', row);
   }
 
