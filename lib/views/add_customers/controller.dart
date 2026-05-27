@@ -26,17 +26,31 @@ class AddCustomersController extends GetxController {
   final RxBool isLoading_commune = false.obs;
   final RxBool isLoading_village = false.obs;
 
-  List<DistrictModel> districtList = [];
-  List<ProvinceModel> ProvinceList = [];
-  List<CommuneModel> CommuneList = [];
-  List<VillageModel> VillageList = [];
-  String? selectedCustomer = 'Female'; // Set to a default value
-  final List<String> customerItems = ['Female', 'Male'];
+  // List<DistrictModel> districtList = [];
+  // List<ProvinceModel> ProvinceList = [];
+  // List<CommuneModel> CommuneList = [];
+  // List<VillageModel> VillageList = [];
+  final RxList<DistrictModel> districtList = <DistrictModel>[].obs;
+  final RxList<ProvinceModel> ProvinceList = <ProvinceModel>[].obs;
+  final RxList<CommuneModel> CommuneList = <CommuneModel>[].obs;
+  final RxList<VillageModel> VillageList = <VillageModel>[].obs;
+  final Rx<String?> selectedCustomer = Rx<String?>(null);
+  final List<String> genderItems = ['Female', 'Male'];
 
   ProvinceModel? ProvinceSelected;
   DistrictModel? DistrictSelected;
   CommuneModel? CommuneSelected;
   VillageModel? VillageSelected;
+
+  // String? selectedCustomer;
+  // final List<IdNameModel> customerItems = [
+  //   IdNameModel(id: 1, name: 'Female'),
+  //   IdNameModel(id: 2, name: 'Male'),
+  // ];
+  void selectGender(String value) {
+    selectedCustomer.value = value;
+  }
+
   @override
   void onInit() async {
     await fetchProvince();
@@ -55,96 +69,180 @@ class AddCustomersController extends GetxController {
     return user_id;
   }
 
+  // Future<void> fetchProvince() async {
+  //   try {
+  //     isLoading.value = true;
+  //     String endPoint = EndPoints.getprovince;
+  //     final res = await Get.find<ApiService>().get(
+  //       endPoint,
+  //       isShowLoading: false,
+  //     );
+  //     final data = getPropertyFromJson(res.data, 'data');
+  //     ProvinceList = List.from(
+  //       (data as List).map((e) => ProvinceModel.fromJson(e)),
+  //     );
+  //   } catch (e) {
+  //     if (isClosed) {
+  //       return;
+  //     }
+  //     ExceptionHandler.handleException(e);
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
+
   Future<void> fetchProvince() async {
     try {
       isLoading.value = true;
-      String endPoint = EndPoints.getprovince;
       final res = await Get.find<ApiService>().get(
-        endPoint,
+        EndPoints.getprovince,
         isShowLoading: false,
       );
       final data = getPropertyFromJson(res.data, 'data');
-      ProvinceList =
-          List.from((data as List).map((e) => ProvinceModel.fromJson(e)));
+      ProvinceList.value = List.from(
+        (data as List).map((e) => ProvinceModel.fromJson(e)),
+      );
     } catch (e) {
-      if (isClosed) {
-        return;
-      }
+      if (isClosed) return;
       ExceptionHandler.handleException(e);
     } finally {
       isLoading.value = false;
     }
   }
 
+  // Future<void> fetchDistrict(int? id) async {
+  //   try {
+  //     isLoading_district.value = true;
+  //     final Map<String, dynamic> params = {'id': id};
+  //     String endPoint = EndPoints.getdistrict;
+  //     final res = await Get.find<ApiService>().get(
+  //       endPoint,
+  //       queryParameters: params,
+  //       isShowLoading: false,
+  //     );
+
+  //     final data = getPropertyFromJson(res.data, 'data');
+  //     districtList = List.from(
+  //       (data as List).map((e) => DistrictModel.fromJson(e)),
+  //     );
+  //   } catch (e) {
+  //     if (isClosed) {
+  //       return;
+  //     }
+  //     ExceptionHandler.handleException(e);
+  //   } finally {
+  //     isLoading_district.value = false;
+  //   }
+  // }
   Future<void> fetchDistrict(int? id) async {
     try {
       isLoading_district.value = true;
-      final Map<String, dynamic> params = {'id': id};
-      String endPoint = EndPoints.getdistrict;
+      districtList.clear(); // clear old data when province changes
+      CommuneList.clear();
+      VillageList.clear();
       final res = await Get.find<ApiService>().get(
-        endPoint,
-        queryParameters: params,
+        EndPoints.getdistrict,
+        queryParameters: {'id': id},
         isShowLoading: false,
       );
-
       final data = getPropertyFromJson(res.data, 'data');
-      districtList =
-          List.from((data as List).map((e) => DistrictModel.fromJson(e)));
+      districtList.value = List.from(
+        (data as List).map((e) => DistrictModel.fromJson(e)),
+      );
     } catch (e) {
-      if (isClosed) {
-        return;
-      }
+      if (isClosed) return;
       ExceptionHandler.handleException(e);
     } finally {
       isLoading_district.value = false;
     }
   }
 
+  // Future<void> fetchCommune(int? id) async {
+  //   try {
+  //     isLoading_commune.value = true;
+  //     final Map<String, dynamic> params = {'id': id};
+  //     String endPoint = EndPoints.getcommune;
+  //     final res = await Get.find<ApiService>().get(
+  //       endPoint,
+  //       queryParameters: params,
+  //       isShowLoading: false,
+  //     );
+
+  //     final data = getPropertyFromJson(res.data, 'data');
+  //     CommuneList = List.from(
+  //       (data as List).map((e) => CommuneModel.fromJson(e)),
+  //     );
+  //   } catch (e) {
+  //     if (isClosed) {
+  //       return;
+  //     }
+  //     ExceptionHandler.handleException(e);
+  //   } finally {
+  //     isLoading_commune.value = false;
+  //   }
+  // }
   Future<void> fetchCommune(int? id) async {
     try {
       isLoading_commune.value = true;
-      final Map<String, dynamic> params = {
-        'id': id,
-      };
-      String endPoint = EndPoints.getcommune;
+      CommuneList.clear();
+      VillageList.clear();
       final res = await Get.find<ApiService>().get(
-        endPoint,
-        queryParameters: params,
+        EndPoints.getcommune,
+        queryParameters: {'id': id},
         isShowLoading: false,
       );
-
       final data = getPropertyFromJson(res.data, 'data');
-      CommuneList =
-          List.from((data as List).map((e) => CommuneModel.fromJson(e)));
+      CommuneList.value = List.from(
+        (data as List).map((e) => CommuneModel.fromJson(e)),
+      );
     } catch (e) {
-      if (isClosed) {
-        return;
-      }
+      if (isClosed) return;
       ExceptionHandler.handleException(e);
     } finally {
       isLoading_commune.value = false;
     }
   }
 
+  // Future<void> fetchVillage(int? id) async {
+  //   try {
+  //     isLoading_village.value = true;
+  //     final Map<String, dynamic> params = {'id': id};
+
+  //     String endPoint = EndPoints.getvillage;
+  //     final res = await Get.find<ApiService>().get(
+  //       endPoint,
+  //       queryParameters: params,
+  //       isShowLoading: false,
+  //     );
+
+  //     final data = getPropertyFromJson(res.data, 'data');
+  //     // VillageList = List.from(
+  //     //   (data as List).map((e) => VillageModel.fromJson(e)),
+  //     // );
+  //   } catch (e) {
+  //     if (isClosed) {
+  //       return;
+  //     }
+  //     ExceptionHandler.handleException(e);
+  //   } finally {
+  //     isLoading_village.value = false;
+  //   }
+  // }
   Future<void> fetchVillage(int? id) async {
     try {
       isLoading_village.value = true;
-      final Map<String, dynamic> params = {'id': id};
-
-      String endPoint = EndPoints.getvillage;
+      VillageList.clear();
       final res = await Get.find<ApiService>().get(
-        endPoint,
-        queryParameters: params,
+        EndPoints.getvillage,
+        queryParameters: {'id': id},
         isShowLoading: false,
       );
-
       final data = getPropertyFromJson(res.data, 'data');
-      VillageList =
-          List.from((data as List).map((e) => VillageModel.fromJson(e)));
+      VillageList.value = List.from(
+        (data as List).map((e) => VillageModel.fromJson(e)),
+      );
     } catch (e) {
-      if (isClosed) {
-        return;
-      }
+      if (isClosed) return;
       ExceptionHandler.handleException(e);
     } finally {
       isLoading_village.value = false;
@@ -155,9 +253,10 @@ class AddCustomersController extends GetxController {
     final DateTime now = DateTime.now();
 
     // Parse initial date or use current date if text is empty
-    final DateTime initialDate = dateOfBirth.text.isEmpty
-        ? now
-        : DateTime.tryParse(dateOfBirth.text) ?? now;
+    final DateTime initialDate =
+        dateOfBirth.text.isEmpty
+            ? now
+            : DateTime.tryParse(dateOfBirth.text) ?? now;
 
     final DatePicker startPicker = DatePicker(
       controller: dateOfBirth,
@@ -203,7 +302,7 @@ class AddCustomersController extends GetxController {
         // This static because of feature removed
         'first_name': firstName.text,
         'last_name': lastName.text,
-        'gender': selectedCustomer,
+        'gender': selectedCustomer.value,
         'dob': dateOfBirth.text,
         'mobile': phoneNumber.text,
         'gis_code': gisCode.text,
