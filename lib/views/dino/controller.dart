@@ -80,7 +80,9 @@ class DinoController extends GetxController {
       collectedTotalController.text = collectedTotal.value.toString();
       isLoading.value = false;
     } catch (e) {
-      print(e);
+      ExceptionHandler.handleException(e);
+    } finally {
+      isLoading.value = false;
     }
   }
 
