@@ -157,23 +157,24 @@ class DashboardWidget extends StatelessWidget {
                             //     LocaleKeys.loanCalculator.tr) {
                             //   LoanCalculatorHandleTap();
                             // }
-                            // if (catName[index] ==
-                            //     LocaleKeys.loanDisbursments.tr) {
-                            //   LoanDisbursmentsHandleTap();
-                            // }// if (catName[index] == LocaleKeys.areaLoan.tr) {
-                            //   AreaLoanHandleTap();
-                            // }
-                            // if (catName[index] == LocaleKeys.customers.tr) {
-                            //   CustomersHandleTap();
-                            // }
+                            if (catName[index] ==
+                                LocaleKeys.loanDisbursments.tr) {
+                              LoanDisbursmentsHandleTap();
+                            } else if (catName[index] ==
+                                LocaleKeys.areaLoan.tr) {
+                              AreaLoanHandleTap();
+                            } else if (catName[index] ==
+                                LocaleKeys.customers.tr) {
+                              CustomersHandleTap();
+                            }
                             // if (catName[index] == LocaleKeys.writtenoff.tr) {
                             //   WrittenOffHandleTap();
-                            // } else
-                            //  if (catName[index] ==
-                            //     LocaleKeys.payforearchother.tr) {
-                            //   PayForEeachOtherHandleTap();
-                            // } else
-                            if (catName[index] == LocaleKeys.repaymentLoan.tr) {
+                            // }
+                            else if (catName[index] ==
+                                LocaleKeys.payforearchother.tr) {
+                              PayForEeachOtherHandleTap();
+                            } else if (catName[index] ==
+                                LocaleKeys.repaymentLoan.tr) {
                               RepaymentHandleTap();
                             } else if (catName[index] ==
                                 LocaleKeys.datasync.tr) {
@@ -204,7 +205,18 @@ class DashboardWidget extends StatelessWidget {
                                   width: 50,
                                   decoration: BoxDecoration(
                                     color:
-                                        [2, 5, 6, 8, 9, 10].contains(index)
+                                        [
+                                              1,
+                                              2,
+                                              3,
+                                              4,
+                                              5,
+                                              6,
+                                              7,
+                                              8,
+                                              9,
+                                              10,
+                                            ].contains(index)
                                             ? catColors[index]
                                             : Color.fromARGB(255, 96, 152, 198),
                                     shape: BoxShape.circle,
