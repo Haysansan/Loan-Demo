@@ -49,6 +49,7 @@ class CustomersController extends GetxController {
     int? branchId = await SharedPreferencesManager.getIntValue('branch_id');
     return branchId;
   }
+
   // show user_id from login
   Future<int?> getUserId() async {
     int? user_id = await SharedPreferencesManager.getIntValue('user_id');
@@ -60,22 +61,25 @@ class CustomersController extends GetxController {
     bool isLoadMore = false,
     bool isFilter = false,
   }) async {
-    if(isFilter==true) {
+    if (isFilter == true) {
       String searchText = searchCtl.text.toLowerCase();
       customerModel.value = List<ClientModel>.from(
         customerModel.value.where(
-              (item) => item.first_name.toLowerCase().contains(searchText) || item.last_name.toLowerCase().contains(searchText),
+          (item) =>
+              item.name.toLowerCase().contains(searchText) ||
+              item.client_code.toLowerCase().contains(searchText),
         ),
       );
-    }else{
+    } else {
       onRefresh();
     }
   }
+
   Future<void> fetchClient({
-      bool isRefresh = false,
-      bool isLoadMore = false,
-      bool isFilter = false,
-    }) async {
+    bool isRefresh = false,
+    bool isLoadMore = false,
+    bool isFilter = false,
+  }) async {
     int? branchId = await getbranchId();
     int? user_id = await getUserId();
     try {
@@ -118,7 +122,9 @@ class CustomersController extends GetxController {
 
       // final data = getPropertyFromJson(DatabaseHelper.instance.queryAllRowsRepayments(1),"data");
       // print(data);
-      final data = getPropertyFromJson(res.data, 'data');
+      // final data = getPropertyFromJson(res.data, 'data');
+      final dataWrapper = getPropertyFromJson(res.data, 'data');
+      final data = getPropertyFromJson(dataWrapper, 'data');
 
       // total = getPropertyFromJson(res.data['totalAmount'], 'total') ?? 0;
       // pagination.checkLoadMore((data['data'] as List).length);
@@ -144,7 +150,6 @@ class CustomersController extends GetxController {
     }
   }
 
-
   Future<void> onRefresh({bool isFilter = false}) async {
     await fetchClient(isRefresh: true, isFilter: isFilter);
     refreshCtl.refreshCompleted();
@@ -161,13 +166,19 @@ class CustomersController extends GetxController {
   ) {
     final DatePicker startPicker = DatePicker(
       controller: startDateCtl,
-      initialDate: startDateCtl.text.isEmpty
-          ? DateTime.parse('${DateFormat("yyyy-MM-dd").format(DateTime.now())} 00:00:00')
-          : DateTime.parse(startDateCtl.text),
+      initialDate:
+          startDateCtl.text.isEmpty
+              ? DateTime.parse(
+                '${DateFormat("yyyy-MM-dd").format(DateTime.now())} 00:00:00',
+              )
+              : DateTime.parse(startDateCtl.text),
       minDate: DateTime(DateTime.now().year - 200),
-      maxDate: endDateCtl.text.isEmpty
-          ? DateTime(DateTime.now().year + 200)
-          : DateTime.parse(endDateCtl.text).subtract(const Duration(days: 1)),
+      maxDate:
+          endDateCtl.text.isEmpty
+              ? DateTime(DateTime.now().year + 200)
+              : DateTime.parse(
+                endDateCtl.text,
+              ).subtract(const Duration(days: 1)),
       minYear: DateTime.now().year - 200,
       maxYear: DateTime.now().year + 200,
     );
@@ -180,18 +191,25 @@ class CustomersController extends GetxController {
   ) {
     final DatePicker startPicker = DatePicker(
       controller: endDateCtl,
-      initialDate: endDateCtl.text.isNotEmpty
-          ? DateTime.parse(endDateCtl.text)
-          : startDateCtl.text.isNotEmpty
+      initialDate:
+          endDateCtl.text.isNotEmpty
+              ? DateTime.parse(endDateCtl.text)
+              : startDateCtl.text.isNotEmpty
               ? DateTime.parse(startDateCtl.text)
-              : DateTime.parse('${DateFormat("yyyy-MM-dd").format(DateTime.now())} 00:00:00'),
-      minDate: startDateCtl.text.isNotEmpty
-          ? DateTime.parse(startDateCtl.text)
-          : endDateCtl.text.isNotEmpty
+              : DateTime.parse(
+                '${DateFormat("yyyy-MM-dd").format(DateTime.now())} 00:00:00',
+              ),
+      minDate:
+          startDateCtl.text.isNotEmpty
+              ? DateTime.parse(startDateCtl.text)
+              : endDateCtl.text.isNotEmpty
               ? DateTime.parse(endDateCtl.text)
               : DateTime(DateTime.now().year - 200),
       maxDate: DateTime(DateTime.now().year + 200),
-      minYear: startDateCtl.text.isEmpty ? DateTime.now().year - 200 : DateTime.parse(startDateCtl.text).year,
+      minYear:
+          startDateCtl.text.isEmpty
+              ? DateTime.now().year - 200
+              : DateTime.parse(startDateCtl.text).year,
       maxYear: DateTime.now().year + 200,
     );
     return startPicker;
