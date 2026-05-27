@@ -10,11 +10,13 @@ class LoanDisbursmentsView extends GetView<LoanDisbursmentsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(title: Text(LocaleKeys.loanDisbursments.tr)),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
-              child: CircularProgressIndicator(color: AppColor.red));
+            child: CircularProgressIndicator(color: AppColor.red),
+          );
         }
         return Padding(
           padding: UIConstants.spacing.padHorizontal,
@@ -33,8 +35,10 @@ class LoanDisbursmentsView extends GetView<LoanDisbursmentsController> {
                       ),
                       SearchDropDown<StaffModel>(
                         items: controller.StaffList,
-                        itemAsString: (item) => item.name
-                            .toString(), // Convert StaffModel to String
+                        itemAsString:
+                            (item) =>
+                                item.name
+                                    .toString(), // Convert StaffModel to String
                         onChanged: (value) async {
                           await controller.onStaffChanged(value);
                         },
@@ -99,8 +103,8 @@ class LoanDisbursmentsView extends GetView<LoanDisbursmentsController> {
                     if (controller.isLoading.value) {
                       // Display loading indicator when data is being fetched
                       return const Center(
-                          child:
-                              CircularProgressIndicator(color: AppColor.red));
+                        child: CircularProgressIndicator(color: AppColor.red),
+                      );
                     }
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,8 +115,9 @@ class LoanDisbursmentsView extends GetView<LoanDisbursmentsController> {
                         ),
                         SearchDropDown<ProductModel>(
                           items: controller.ProductList,
-                          itemAsString: (item) =>
-                              '${item.id} - ${item.name}', // Convert StaffModel to String
+                          itemAsString:
+                              (item) =>
+                                  '${item.id} - ${item.name}', // Convert StaffModel to String
                           onChanged: (value) {
                             controller.onProductChanged(value as ProductModel?);
                           },
@@ -126,8 +131,8 @@ class LoanDisbursmentsView extends GetView<LoanDisbursmentsController> {
                     if (controller.isLoading1.value) {
                       // Display loading indicator when data is being fetched
                       return const Center(
-                          child:
-                              CircularProgressIndicator(color: AppColor.red));
+                        child: CircularProgressIndicator(color: AppColor.red),
+                      );
                     }
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,11 +143,12 @@ class LoanDisbursmentsView extends GetView<LoanDisbursmentsController> {
                         ),
                         SearchDropDown(
                           items: controller.ClientList,
-                          itemAsString: (item) =>
-                              '${item.client_code} - ${item.name}',
+                          itemAsString:
+                              (item) => '${item.client_code} - ${item.name}',
                           onChanged: (value) {
-                            controller
-                                .onClientChanged(value as ClientDisbModel?);
+                            controller.onClientChanged(
+                              value as ClientDisbModel?,
+                            );
                           },
                           selectedItem: controller.clientSelected,
                         ),
@@ -154,54 +160,57 @@ class LoanDisbursmentsView extends GetView<LoanDisbursmentsController> {
                   Column(
                     children: [
                       Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      LocaleKeys.inst.tr,
-                                      style: AppTextStyle.normalPrimaryRegular,
-                                    ),
-                                    2.height,
-                                    CustomTextField(
-                                      controller: controller.instCtl,
-                                      hintText: '\0.00',
-                                      textInputAction: TextInputAction.next,
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                              decimal: true),
-                                      validator: (text) =>
-                                          FormValidator.empty(text),
-                                    ),
-                                  ]),
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  LocaleKeys.inst.tr,
+                                  style: AppTextStyle.normalPrimaryRegular,
+                                ),
+                                2.height,
+                                CustomTextField(
+                                  controller: controller.instCtl,
+                                  hintText: '\0.00',
+                                  textInputAction: TextInputAction.next,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                        decimal: true,
+                                      ),
+                                  validator:
+                                      (text) => FormValidator.empty(text),
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              width: 10,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  LocaleKeys.principals.tr,
+                                  style: AppTextStyle.normalPrimaryRegular,
+                                ),
+                                2.height,
+                                CustomTextField(
+                                  controller: controller.principlCtl,
+                                  hintText: '\0.00',
+                                  textInputAction: TextInputAction.next,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                        decimal: true,
+                                      ),
+                                  validator:
+                                      (text) => FormValidator.empty(text),
+                                ),
+                              ],
                             ),
-                            Expanded(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      LocaleKeys.principals.tr,
-                                      style: AppTextStyle.normalPrimaryRegular,
-                                    ),
-                                    2.height,
-                                    CustomTextField(
-                                      controller: controller.principlCtl,
-                                      hintText: '\0.00',
-                                      textInputAction: TextInputAction.next,
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                              decimal: true),
-                                      validator: (text) =>
-                                          FormValidator.empty(text),
-                                    ),
-                                  ]),
-                            ),
-                          ]),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   UIConstants.spacing.height,
@@ -210,54 +219,57 @@ class LoanDisbursmentsView extends GetView<LoanDisbursmentsController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      LocaleKeys.interast.tr,
-                                      style: AppTextStyle.normalPrimaryRegular,
-                                    ),
-                                    2.height,
-                                    CustomTextField(
-                                      controller: controller.intCtl,
-                                      hintText: '\0.00',
-                                      textInputAction: TextInputAction.next,
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                              decimal: true),
-                                      validator: (text) =>
-                                          FormValidator.empty(text),
-                                    ),
-                                  ]),
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  LocaleKeys.interast.tr,
+                                  style: AppTextStyle.normalPrimaryRegular,
+                                ),
+                                2.height,
+                                CustomTextField(
+                                  controller: controller.intCtl,
+                                  hintText: '\0.00',
+                                  textInputAction: TextInputAction.next,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                        decimal: true,
+                                      ),
+                                  validator:
+                                      (text) => FormValidator.empty(text),
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              width: 10,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  LocaleKeys.fee.tr,
+                                  style: AppTextStyle.normalPrimaryRegular,
+                                ),
+                                2.height,
+                                CustomTextField(
+                                  controller: controller.addminFeeCtl,
+                                  hintText: '\0.00',
+                                  textInputAction: TextInputAction.next,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                        decimal: true,
+                                      ),
+                                  validator:
+                                      (text) => FormValidator.empty(text),
+                                ),
+                              ],
                             ),
-                            Expanded(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      LocaleKeys.fee.tr,
-                                      style: AppTextStyle.normalPrimaryRegular,
-                                    ),
-                                    2.height,
-                                    CustomTextField(
-                                      controller: controller.addminFeeCtl,
-                                      hintText: '\0.00',
-                                      textInputAction: TextInputAction.next,
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                              decimal: true),
-                                      validator: (text) =>
-                                          FormValidator.empty(text),
-                                    ),
-                                  ]),
-                            ),
-                          ]),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   // Choose date

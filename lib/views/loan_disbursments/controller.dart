@@ -36,7 +36,8 @@ class LoanDisbursmentsController extends GetxController {
   List<StaffModel> StaffList = [];
   StaffModel? StaffSelected;
 
-  List<ProductModel> ProductList = [];
+  // List<ProductModel> ProductList = [];
+  final RxList<ProductModel> ProductList = <ProductModel>[].obs;
   ProductModel? ProductSelected;
 
   @override
@@ -45,8 +46,9 @@ class LoanDisbursmentsController extends GetxController {
     await fetchProduct();
     DateTime now = DateTime.now();
     dateOpenLoanCtl.text = DateFormat('yyyy-MM-dd').format(now);
-    dateFirstRepaymentCtl.text =
-        DateFormat('yyyy-MM-dd').format(now.add(Duration(days: 1)));
+    dateFirstRepaymentCtl.text = DateFormat(
+      'yyyy-MM-dd',
+    ).format(now.add(Duration(days: 1)));
     super.onInit();
   }
 
@@ -66,11 +68,16 @@ class LoanDisbursmentsController extends GetxController {
   Future<void> fetchProduct() async {
     try {
       isLoading.value = true;
-      ProductList = await DatabaseHelper.instance.queryAllRowsProducts();
+      final res = await Get.find<ApiService>().get(
+        EndPoints.getProByFrequencyType,
+        isShowLoading: false,
+      );
+      final data = getPropertyFromJson(res.data, 'data');
+      ProductList.assignAll(
+        List.from((data as List).map((e) => ProductModel.fromJson(e))),
+      );
     } catch (e) {
-      if (isClosed) {
-        return;
-      }
+      if (isClosed) return;
       ExceptionHandler.handleException(e);
     } finally {
       isLoading.value = false;
@@ -79,9 +86,7 @@ class LoanDisbursmentsController extends GetxController {
 
   // get product detail
   Future<void> fetchProductDetail(num? id) async {
-    final Map<String, dynamic> params = {
-      'id': id,
-    };
+    final Map<String, dynamic> params = {'id': id};
 
     try {
       isLoadings1.value = true;
@@ -150,8 +155,9 @@ class LoanDisbursmentsController extends GetxController {
         queryParameters: params,
       );
       final data = getPropertyFromJson(res.data, 'data');
-      ClientList =
-          List.from((data as List).map((e) => ClientDisbModel.fromJson(e)));
+      ClientList = List.from(
+        (data as List).map((e) => ClientDisbModel.fromJson(e)),
+      );
     } catch (e) {
       if (isClosed) {
         return;
@@ -165,10 +171,12 @@ class LoanDisbursmentsController extends GetxController {
   DatePicker getDateFirstPicker() {
     final DatePicker startPicker = DatePicker(
       controller: dateFirstRepaymentCtl,
-      initialDate: dateFirstRepaymentCtl.text.isEmpty
-          ? DateTime.parse(
-              '${DateFormat("yyyy-MM-dd").format(DateTime.now())} 00:00:00')
-          : DateTime.parse(dateFirstRepaymentCtl.text),
+      initialDate:
+          dateFirstRepaymentCtl.text.isEmpty
+              ? DateTime.parse(
+                '${DateFormat("yyyy-MM-dd").format(DateTime.now())} 00:00:00',
+              )
+              : DateTime.parse(dateFirstRepaymentCtl.text),
       minDate: DateTime(DateTime.now().year),
       maxDate: DateTime(DateTime.now().year + 200),
       minYear: DateTime.now().year,
@@ -180,10 +188,12 @@ class LoanDisbursmentsController extends GetxController {
   DatePicker getDatePicker() {
     final DatePicker startPicker = DatePicker(
       controller: dateOpenLoanCtl,
-      initialDate: dateOpenLoanCtl.text.isEmpty
-          ? DateTime.parse(
-              '${DateFormat("yyyy-MM-dd").format(DateTime.now())} 00:00:00')
-          : DateTime.parse(dateOpenLoanCtl.text),
+      initialDate:
+          dateOpenLoanCtl.text.isEmpty
+              ? DateTime.parse(
+                '${DateFormat("yyyy-MM-dd").format(DateTime.now())} 00:00:00',
+              )
+              : DateTime.parse(dateOpenLoanCtl.text),
       minDate: DateTime(DateTime.now().year),
       maxDate: DateTime(DateTime.now().year + 200),
       minYear: DateTime.now().year,
@@ -208,11 +218,12 @@ class LoanDisbursmentsController extends GetxController {
     ProductSelected = selectedClient;
   }
 
-// Method to handle staff selection change
+  // Method to handle staff selection change
   Future<void> onStaffChanged(StaffModel? selectedStaff) async {
     StaffSelected = selectedStaff;
     await fetchClient(
-        StaffSelected?.id); // Fetch clients based on selected staff
+      StaffSelected?.id,
+    ); // Fetch clients based on selected staff
   }
 
   Future<void> submitBooking() async {

@@ -29,6 +29,28 @@ class DatePicker {
     }
   }
 
+  // void _androidPicker() async {
+  //   final result = await showDatePicker(
+  //     context: UserRepository.shared.context!,
+  //     initialDate: initialDate,
+  //     firstDate: minDate,
+  //     lastDate: maxDate,
+  //     builder: (context, child) {
+  //       return Theme(
+  //         data: Theme.of(context).copyWith(
+  //           colorScheme: const ColorScheme.light(primary: AppColor.secondary),
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+
+  //   if (result == null) {
+  //     controller.text = DateFormat('yyyy-MM-dd').format(initialDate);
+  //     return;
+  //   }
+  //   controller.text = result.toString().split(' ')[0];
+  // }
   void _androidPicker() async {
     final result = await showDatePicker(
       context: UserRepository.shared.context!,
@@ -40,7 +62,12 @@ class DatePicker {
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(primary: AppColor.secondary),
           ),
-          child: child!,
+          child: MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaler: TextScaler.noScaling, // reset scaler
+            ),
+            child: child!,
+          ),
         );
       },
     );
@@ -52,23 +79,52 @@ class DatePicker {
     controller.text = result.toString().split(' ')[0];
   }
 
+  // void _iosPicker() async {
+  //   await showCupertinoModalPopup(
+  //     context: UserRepository.shared.context!,
+  //     builder: (context) {
+  //       return CupertinoActionSheet(
+  //         actions: [_cupertinoAction()],
+  //         cancelButton: CupertinoActionSheetAction(
+  //           child: Text(
+  //             LocaleKeys.done.tr,
+  //             style: AppTextStyle.mediumRedSemiBold,
+  //           ),
+  //           onPressed: () {
+  //             if (controller.text.isEmpty) {
+  //               controller.text = DateFormat('yyyy-MM-dd').format(initialDate);
+  //             }
+  //             Navigator.of(context).pop();
+  //           },
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
   void _iosPicker() async {
     await showCupertinoModalPopup(
       context: UserRepository.shared.context!,
       builder: (context) {
-        return CupertinoActionSheet(
-          actions: [_cupertinoAction()],
-          cancelButton: CupertinoActionSheetAction(
-            child: Text(
-              LocaleKeys.done.tr,
-              style: AppTextStyle.mediumRedSemiBold,
+        return MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.noScaling),
+          child: CupertinoActionSheet(
+            actions: [_cupertinoAction()],
+            cancelButton: CupertinoActionSheetAction(
+              child: Text(
+                LocaleKeys.done.tr,
+                style: AppTextStyle.mediumRedSemiBold,
+              ),
+              onPressed: () {
+                if (controller.text.isEmpty) {
+                  controller.text = DateFormat(
+                    'yyyy-MM-dd',
+                  ).format(initialDate);
+                }
+                Navigator.of(context).pop();
+              },
             ),
-            onPressed: () {
-              if (controller.text.isEmpty) {
-                controller.text = DateFormat('yyyy-MM-dd').format(initialDate);
-              }
-              Navigator.of(context).pop();
-            },
           ),
         );
       },
@@ -86,7 +142,8 @@ class DatePicker {
         minimumYear: minYear,
         maximumYear: maxYear,
         mode: CupertinoDatePickerMode.date,
-        onDateTimeChanged: (date) => controller.text = date.toString().split(' ')[0],
+        onDateTimeChanged:
+            (date) => controller.text = date.toString().split(' ')[0],
       ),
     );
   }
