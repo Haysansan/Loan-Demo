@@ -18,18 +18,15 @@ class TotalPackageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 85,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 14,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
 
       decoration: BoxDecoration(
-        color: AppColor.blue,
+        color: const Color(0xFFFE002A),
         borderRadius: UIConstants.radius.radiusAll,
         image: DecorationImage(
           image: AssetImage(AssetPath.dashboard.path),
           fit: BoxFit.cover,
-          opacity: 0.6,
+          opacity: 0.35,
         ),
         border: Border.all(width: 1, color: AppColor.lightGrey),
       ),
@@ -45,17 +42,10 @@ class TotalPackageWidget extends StatelessWidget {
                 title ?? LocaleKeys.clients.tr,
                 style: AppTextStyle.normalWhiteRegular,
               ),
-              Text(
-                packages,
-                style: AppTextStyle.midWhiteSemiBold,
-              ),
+              Text(packages, style: AppTextStyle.midWhiteSemiBold),
             ],
           ),
-          Icon(
-            icon ?? Icons.assignment_sharp,
-            size: 50,
-            color: Colors.white,
-          )
+          Icon(icon ?? Icons.assignment_sharp, size: 50, color: Colors.white),
         ],
       ),
     );

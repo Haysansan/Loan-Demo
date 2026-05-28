@@ -15,19 +15,24 @@ class CustomersView extends GetView<CustomersController> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.pop(context, false);
-            }
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context, false);
+          },
         ),
-        title: Text(LocaleKeys.customers.tr, style: AppTextStyle.normalWhiteRegular,),
+        title: Text(
+          LocaleKeys.customers.tr,
+          style: AppTextStyle.normalWhiteRegular,
+        ),
         iconTheme: const IconThemeData(color: Colors.black),
         elevation: 0.0,
         backgroundColor: AppColor.primary,
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator(color: AppColor.red));
+          return const Center(
+            child: CircularProgressIndicator(color: AppColor.red),
+          );
         }
 
         if (controller.customerModel.isEmpty) {
@@ -62,7 +67,10 @@ class CustomersView extends GetView<CustomersController> {
                             return;
                           }
                           controller.clearFitler();
-                          controller.fetchClientSearch(isRefresh: true, isFilter: true);
+                          controller.fetchClientSearch(
+                            isRefresh: true,
+                            isFilter: true,
+                          );
                         },
                         child: Text(
                           LocaleKeys.clear.tr,
@@ -83,7 +91,10 @@ class CustomersView extends GetView<CustomersController> {
                         return;
                       }
                       controller.setSearchValue();
-                      controller.fetchClientSearch(isRefresh: true, isFilter: true);
+                      controller.fetchClientSearch(
+                        isRefresh: true,
+                        isFilter: true,
+                      );
                     },
                   ),
                   UIConstants.spacing.height,
@@ -136,12 +147,14 @@ class CustomersView extends GetView<CustomersController> {
         );
       }),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFFFFDDE3),
         onPressed: AddCustomerHandleTap,
         tooltip: 'Perform Action',
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.red),
       ),
     );
   }
+
   void AddCustomerHandleTap() {
     Get.back();
     Get.toNamed(Routes.addCustomer);

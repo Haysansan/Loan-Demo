@@ -152,7 +152,7 @@ class CustomersItemWidget extends StatelessWidget {
       case 'ត្រឡប់':
         return const Color(0xFF4C56AF);
       default:
-        return const Color(0xFF0C55C3);
+        return const Color(0xFFF21A3E);
     }
   }
 }

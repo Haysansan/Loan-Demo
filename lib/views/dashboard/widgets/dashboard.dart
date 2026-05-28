@@ -7,7 +7,7 @@ import 'package:apploan/routes.dart';
 class DashboardWidget extends StatelessWidget {
   @override
   List catName = [
-    LocaleKeys.loanCalculator.tr,
+    // LocaleKeys.loanCalculator.tr,
     LocaleKeys.loanDisbursments.tr,
     LocaleKeys.repaymentLoan.tr,
     LocaleKeys.areaLoan.tr,
@@ -21,17 +21,17 @@ class DashboardWidget extends StatelessWidget {
     'DENO',
   ];
   List<Color> catColors = [
-    Color(0xFF5DAFF1),
-    Color(0xFF5DAFF1),
-    Color(0xFF5DAFF1),
-    Color(0xFF5DAFF1),
-    Color(0xFF5DAFF1),
-    Color(0xFF5DAFF1),
-    Color(0xFF5DAFF1),
-    Color(0xFF5DAFF1),
-    Color(0xFF5DAFF1),
-    Color(0xFF5DAFF1),
-    Color(0xFF5DAFF1),
+    // Color(0xFF5DAFF1),
+    Color(0xFFF21A3E),
+    Color(0xFFF21A3E),
+    Color(0xFFF21A3E),
+    Color(0xFFF21A3E),
+    Color(0xFFF21A3E),
+    Color(0xFFF21A3E),
+    Color(0xFFF21A3E),
+    Color(0xFFF21A3E),
+    Color(0xFFF21A3E),
+    Color(0xFFF21A3E),
   ];
   List imageList = [
     {"id": 1, "image_path": "assets/images/banner1.png"},
@@ -42,18 +42,18 @@ class DashboardWidget extends StatelessWidget {
   int currentIndex = 0;
 
   final List<Widget> catIcons = [
-    Image.asset('assets/images/icon/calculator.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/disburme.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/repayment.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/arrear.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/customer.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/writtenoff.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/prepaid.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/paidofother.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/sync.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/transfer.png', width: 30, height: 30),
+    // Image.asset('assets/images/icon/calculator.png', width: 30, height: 30),
+    Image.asset('assets/images/icon/disburme.png', width: 35, height: 35),
+    Image.asset('assets/images/icon/repayment.png', width: 35, height: 35),
+    Image.asset('assets/images/icon/arrear.png', width: 35, height: 35),
+    Image.asset('assets/images/icon/customer.png', width: 35, height: 35),
+    Image.asset('assets/images/icon/writtenoff.png', width: 40, height: 40),
+    Image.asset('assets/images/icon/prepaid.png', width: 35, height: 35),
+    Image.asset('assets/images/icon/paidofother.png', width: 35, height: 35),
+    Image.asset('assets/images/icon/sync.png', width: 35, height: 35),
+    Image.asset('assets/images/icon/transfer.png', width: 35, height: 35),
 
-    Image.asset('assets/images/icon/transfer.png', width: 30, height: 30),
+    Image.asset('assets/images/icon/transfer.png', width: 35, height: 35),
   ];
   List getReport = ["អតិថិជនបានបង់", "អតិថិជនមិនបានបង់", "អតិថិជនត្រូវប្រមូល"];
 
@@ -85,10 +85,10 @@ class DashboardWidget extends StatelessWidget {
     Get.toNamed(Routes.transferData);
   }
 
-  void LoanCalculatorHandleTap() {
-    Get.back();
-    Get.toNamed(Routes.loancalculator);
-  }
+  // void LoanCalculatorHandleTap() {
+  //   Get.back();
+  //   Get.toNamed(Routes.loancalculator);
+  // }
 
   void LoanDisbursmentsHandleTap() {
     Get.back();
@@ -201,11 +201,12 @@ class DashboardWidget extends StatelessWidget {
                             child: Column(
                               children: [
                                 Container(
-                                  height: 50,
-                                  width: 50,
+                                  height: 60,
+                                  width: 60,
                                   decoration: BoxDecoration(
                                     color:
                                         [
+                                              0,
                                               1,
                                               2,
                                               3,
@@ -215,10 +216,9 @@ class DashboardWidget extends StatelessWidget {
                                               7,
                                               8,
                                               9,
-                                              10,
                                             ].contains(index)
                                             ? catColors[index]
-                                            : Color.fromARGB(255, 96, 152, 198),
+                                            : Color(0xFFA88787),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Center(child: catIcons[index]),
