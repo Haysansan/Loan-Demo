@@ -141,8 +141,7 @@ class AddCustomersController extends GetxController {
       CommuneList.clear();
       VillageList.clear();
       final res = await Get.find<ApiService>().get(
-        EndPoints.getdistrict,
-        queryParameters: {'id': id},
+        '${EndPoints.getdistrict}/$id',
         isShowLoading: false,
       );
       final data = getPropertyFromJson(res.data, 'data');
@@ -187,8 +186,7 @@ class AddCustomersController extends GetxController {
       CommuneList.clear();
       VillageList.clear();
       final res = await Get.find<ApiService>().get(
-        EndPoints.getcommune,
-        queryParameters: {'id': id},
+        '${EndPoints.getdistrict}/$id',
         isShowLoading: false,
       );
       final data = getPropertyFromJson(res.data, 'data');
@@ -233,8 +231,7 @@ class AddCustomersController extends GetxController {
       isLoading_village.value = true;
       VillageList.clear();
       final res = await Get.find<ApiService>().get(
-        EndPoints.getvillage,
-        queryParameters: {'id': id},
+        '${EndPoints.getdistrict}/$id',
         isShowLoading: false,
       );
       final data = getPropertyFromJson(res.data, 'data');

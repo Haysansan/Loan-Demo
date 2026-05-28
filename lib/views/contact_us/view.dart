@@ -12,7 +12,9 @@ class ContactUsView extends GetView<ContactUsController> {
       appBar: AppBar(title: Text(LocaleKeys.contactUs.tr)),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator(color: AppColor.red));
+          return const Center(
+            child: CircularProgressIndicator(color: AppColor.red),
+          );
         }
         return Center(
           child: Column(
@@ -28,12 +30,11 @@ class ContactUsView extends GetView<ContactUsController> {
               (UIConstants.spacing).height,
 
               // Khmer name
-              Text(
-                controller.contactUs.value?.khmerName ?? 'N/A',
-                style: AppTextStyle.largePrimaryBold,
-              ),
-              (UIConstants.spacing + 8).height,
-
+              // Text(
+              //   controller.contactUs.value?.khmerName ?? 'N/A',
+              //   style: AppTextStyle.largePrimaryBold,
+              // ),
+              // (UIConstants.spacing + 8).height,
               Padding(
                 padding: UIConstants.spacing.padAll,
                 child: Column(

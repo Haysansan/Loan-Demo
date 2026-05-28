@@ -287,7 +287,7 @@ class AddCustomersView extends GetView<AddCustomersController> {
                                           items: controller.districtList,
                                           itemAsString:
                                               (item) =>
-                                                  '${item.id} - ${item.name}', // Convert StaffModel to String
+                                                  '${item.id} - ${item.name_kh}', // Convert StaffModel to String
                                           onChanged: (value) {
                                             controller.onDistrictChanged(
                                               value as DistrictModel?,
