@@ -41,20 +41,20 @@ class ClientModel {
 
   factory ClientModel.fromJson(Map<String, dynamic> json) {
     return ClientModel(
-      branch: json["branch"] ?? 'N/A',
-      staff: json["staff"] ?? 'N/A',
+      branch: json["branch"]?.toString() ?? 'N/A',
+      staff: json["staff"]?.toString() ?? 'N/A',
       id: json["id"] ?? 0,
-      client_code: json["client_code"] ?? 'N/A',
-      loan_officer_id: json["loan_officer_id"] ?? 'N/A',
-      first_name: json["first_name"] ?? 'N/A',
-      last_name: json["last_name"] ?? 'N/A',
-      gender: json["gender"] ?? 'N/A',
-      mobile: json["mobile"] ?? 'N/A',
-      external_id: json["external_id"] ?? 'N/A',
-      email: json["email"] ?? 'N/A',
-      photo: json["photo"] ?? '',
-      address: json["address"] ?? 'N/A',
-      name: json["name"] ?? 'N/A',
+      client_code: json["client_code"]?.toString() ?? 'N/A',
+      loan_officer_id: json["loan_officer_id"]?.toString() ?? 'N/A',
+      first_name: json["first_name"]?.toString() ?? 'N/A',
+      last_name: json["last_name"]?.toString() ?? 'N/A',
+      gender: json["gender"]?.toString() ?? 'N/A',
+      mobile: json["mobile"]?.toString() ?? 'N/A',
+      external_id: json["external_id"]?.toString() ?? 'N/A',
+      email: json["email"]?.toString() ?? 'N/A',
+      photo: json["photo"]?.toString() ?? '',
+      address: json["address"]?.toString() ?? 'N/A',
+      name: json["name"]?.toString() ?? 'N/A',
     );
   }
 }
