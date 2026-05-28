@@ -12,9 +12,9 @@ class DinoView extends GetView<DinoController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text("DENO", style: TextStyle(color: Colors.white)),
-        backgroundColor: AppColor.primary,
+      appBar: CustomAppBar(
+        title: LocaleKeys.deno.tr,
+        onBack: () => Navigator.pop(context, false),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(12),

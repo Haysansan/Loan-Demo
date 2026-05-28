@@ -12,16 +12,23 @@ class PaidOffView extends GetView<PaidOffController> {
   String formatCurrency(String amount) {
     // ignore: unnecessary_null_comparison
     return amount != null
-        ? '${NumberFormat.currency(locale: 'en_US', symbol: '').format(double.parse(amount))}'.replaceAll('.00', '')
+        ? '${NumberFormat.currency(locale: 'en_US', symbol: '').format(double.parse(amount))}'
+            .replaceAll('.00', '')
         : 'N/A';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(
+        title: LocaleKeys.paidoff.tr,
+        onBack: () => Navigator.pop(context, false),
+      ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator(color: AppColor.red));
+          return const Center(
+            child: CircularProgressIndicator(color: AppColor.red),
+          );
         }
         if (controller.repaymentModels.isEmpty) {
           return const NoDataWidget();
@@ -55,7 +62,10 @@ class PaidOffView extends GetView<PaidOffController> {
                             return;
                           }
                           controller.clearFitler();
-                          controller.fetchRepaymentSearch(isRefresh: true, isFilter: false);
+                          controller.fetchRepaymentSearch(
+                            isRefresh: true,
+                            isFilter: false,
+                          );
                         },
                         child: Text(
                           LocaleKeys.clear.tr,
@@ -75,7 +85,10 @@ class PaidOffView extends GetView<PaidOffController> {
                         return;
                       }
                       controller.setSearchValue();
-                      controller.fetchRepaymentSearch(isRefresh: true, isFilter: true);
+                      controller.fetchRepaymentSearch(
+                        isRefresh: true,
+                        isFilter: true,
+                      );
                     },
                   ),
                   UIConstants.spacing.height,
@@ -87,7 +100,7 @@ class PaidOffView extends GetView<PaidOffController> {
             Padding(
               padding: UIConstants.spacing.padHorizontal,
               child: Text(
-                '${LocaleKeys.totalOS.tr} ${controller.totalAmount.text } |  ${controller.totalClient.text } ${LocaleKeys.clients.tr}',
+                '${LocaleKeys.totalOS.tr} ${controller.totalAmount.text} |  ${controller.totalClient.text} ${LocaleKeys.clients.tr}',
                 style: AppTextStyle.normalPrimaryBold,
               ),
             ),

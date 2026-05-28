@@ -12,22 +12,15 @@ class RepaymentView extends GetView<RepaymentController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.pop(context, false);
-            }
-        ),
-        title: Text(LocaleKeys.repayment.tr, style: AppTextStyle.normalWhiteRegular,),
-        iconTheme: const IconThemeData(color: Colors.black),
-        elevation: 0.0,
-        backgroundColor: AppColor.primary,
+      appBar: CustomAppBar(
+        title: LocaleKeys.repayment.tr,
+        onBack: () => Navigator.pop(context, false),
       ),
-      body:
-      Obx(() {
+      body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator(color: AppColor.red));
+          return const Center(
+            child: CircularProgressIndicator(color: AppColor.red),
+          );
         }
         if (controller.repaymentModel.isEmpty) {
           return const NoDataWidget();
@@ -61,7 +54,10 @@ class RepaymentView extends GetView<RepaymentController> {
                             return;
                           }
                           controller.clearFitler();
-                          controller.fetchRepaymentSearch(isRefresh: true, isFilter: false);
+                          controller.fetchRepaymentSearch(
+                            isRefresh: true,
+                            isFilter: false,
+                          );
                         },
                         child: Text(
                           LocaleKeys.clear.tr,
@@ -82,7 +78,10 @@ class RepaymentView extends GetView<RepaymentController> {
                         return;
                       }
                       controller.setSearchValue();
-                      controller.fetchRepaymentSearch(isRefresh: true, isFilter: true);
+                      controller.fetchRepaymentSearch(
+                        isRefresh: true,
+                        isFilter: true,
+                      );
                     },
                   ),
                   UIConstants.spacing.height,
@@ -94,7 +93,7 @@ class RepaymentView extends GetView<RepaymentController> {
             Padding(
               padding: UIConstants.spacing.padHorizontal,
               child: Text(
-                '${LocaleKeys.totalOS.tr} ${controller.totalAmount.text } |  ${controller.totalClient.text } ${LocaleKeys.clients.tr}',
+                '${LocaleKeys.totalOS.tr} ${controller.totalAmount.text} |  ${controller.totalClient.text} ${LocaleKeys.clients.tr}',
                 style: AppTextStyle.normalPrimaryBold,
               ),
             ),
@@ -137,9 +136,11 @@ class RepaymentView extends GetView<RepaymentController> {
     );
   }
 }
+
 String formatCurrency(String amount) {
   // ignore: unnecessary_null_comparison
   return amount != null
-      ? 'រៀល ${NumberFormat.currency(locale: 'en_US', symbol: '').format(double.parse(amount))}'.replaceAll('.00', '')
+      ? 'រៀល ${NumberFormat.currency(locale: 'en_US', symbol: '').format(double.parse(amount))}'
+          .replaceAll('.00', '')
       : 'N/A';
 }

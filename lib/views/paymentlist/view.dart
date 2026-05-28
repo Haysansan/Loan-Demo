@@ -16,6 +16,10 @@ class PaymentCollectionView extends GetView<PaymentListController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(
+        title: LocaleKeys.paymentslist.tr,
+        onBack: () => Navigator.pop(context, false),
+      ),
       body: Obx(() {
         if (controller.isLoading.value) {
           return Center(child: CircularProgressIndicator());

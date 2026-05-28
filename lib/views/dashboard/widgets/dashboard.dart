@@ -128,11 +128,19 @@ class DashboardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // decoration: BoxDecoration(
+      //   image: DecorationImage(
+      //     image: AssetImage("assets/images/background-2.jpg"),
+      //     fit: BoxFit.fill,
+      //   ),
+      // ),
+      margin: const EdgeInsets.symmetric(
+        horizontal: 16,
+      ), // ← same as summary card
       decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/images/background-2.jpg"),
-          fit: BoxFit.fill,
-        ),
+        color: Colors.white.withOpacity(0.65),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
       ),
       child: Stack(
         children: [

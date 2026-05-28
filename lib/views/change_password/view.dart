@@ -9,7 +9,10 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(LocaleKeys.changePassword.tr)),
+      appBar: CustomAppBar(
+        title: LocaleKeys.changePassword.tr,
+        onBack: () => Navigator.pop(context, false),
+      ),
       body: SafeArea(
         bottom: true,
         child: Form(
@@ -28,8 +31,15 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                     obscureText: controller.isCurrentVisible.value,
                     textInputAction: TextInputAction.next,
                     suffixIcon: InkWell(
-                      onTap: () => controller.isCurrentVisible.value = !controller.isCurrentVisible.value,
-                      child: Icon(controller.isCurrentVisible.value ? Icons.visibility : Icons.visibility_off),
+                      onTap:
+                          () =>
+                              controller.isCurrentVisible.value =
+                                  !controller.isCurrentVisible.value,
+                      child: Icon(
+                        controller.isCurrentVisible.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
                     ),
                     hintText: LocaleKeys.currentPassword.tr,
                     validator: (text) => FormValidator.empty(text),
@@ -45,8 +55,15 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                     controller: controller.newPassCtl,
                     textInputAction: TextInputAction.next,
                     suffixIcon: InkWell(
-                      onTap: () => controller.isnewVisible.value = !controller.isnewVisible.value,
-                      child: Icon(controller.isnewVisible.value ? Icons.visibility : Icons.visibility_off),
+                      onTap:
+                          () =>
+                              controller.isnewVisible.value =
+                                  !controller.isnewVisible.value,
+                      child: Icon(
+                        controller.isnewVisible.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
                     ),
                     hintText: LocaleKeys.newPassword.tr,
                     validator: (text) => FormValidator.empty(text),
@@ -62,14 +79,22 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                     obscureText: controller.isconfirmVisible.value,
                     textInputAction: TextInputAction.done,
                     suffixIcon: InkWell(
-                      onTap: () => controller.isconfirmVisible.value = !controller.isconfirmVisible.value,
-                      child: Icon(controller.isconfirmVisible.value ? Icons.visibility : Icons.visibility_off),
+                      onTap:
+                          () =>
+                              controller.isconfirmVisible.value =
+                                  !controller.isconfirmVisible.value,
+                      child: Icon(
+                        controller.isconfirmVisible.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
                     ),
                     hintText: LocaleKeys.confirmPassword.tr,
-                    validator: (text) => FormValidator.equalValues(
-                      original: controller.newPassCtl.text,
-                      confirm: text,
-                    ),
+                    validator:
+                        (text) => FormValidator.equalValues(
+                          original: controller.newPassCtl.text,
+                          confirm: text,
+                        ),
                   ),
                 ),
                 50.height,

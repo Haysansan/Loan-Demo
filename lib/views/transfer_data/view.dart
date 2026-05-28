@@ -43,17 +43,9 @@ class TransferDataView extends GetView<TransferDataController> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              controller.isLoading.value ? null : Navigator.pop(context, false);
-            },
-          ),
-          title: Text(LocaleKeys.transfersdata.tr),
-          iconTheme: const IconThemeData(color: Colors.black),
-          elevation: 0.0,
-          backgroundColor: AppColor.primary,
+        appBar: CustomAppBar(
+          title: LocaleKeys.transfersdata.tr,
+          onBack: () => Navigator.pop(context, false),
         ),
         body: SingleChildScrollView(
           child: Column(

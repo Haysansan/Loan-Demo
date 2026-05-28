@@ -78,6 +78,13 @@ class AppTextStyle {
     fontSize: 20,
     fontWeight: AppStyle._medium,
   );
+
+  static const largeWhiteBold = TextStyle(
+    color: AppColor.white,
+    fontSize: 20,
+    fontWeight: AppStyle._medium,
+  );
+
   static const largePrimaryRegular = TextStyle(
     color: AppColor.primaryText,
     fontSize: 20,

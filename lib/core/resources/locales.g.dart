@@ -63,6 +63,7 @@ class LocaleKeys {
   static const filterDate = 'filterDate';
   static const termAndCondition = 'termAndCondition';
   static const contactUs = 'contactUs';
+  static const deno = 'deno';
   static const noPackage = 'noPackage';
   static const totalAmount = 'totalAmount';
   static const deliveriesC = 'deliveriesC';
@@ -350,6 +351,7 @@ class Locales {
     'filterDate': 'Filter date',
     'termAndCondition': 'Term and Conditions',
     'contactUs': 'Contact Us',
+    'deno': 'DENO',
     'noPackage': 'No Package',
     'totalAmount': 'Total amount',
     'deliveriesC': 'DELIVERIES',
@@ -635,6 +637,7 @@ class Locales {
     'filterDate': 'កំណត់កាលបរិច្ឆេទ',
     'termAndCondition': 'លក្ខខណ្ឌ',
     'contactUs': 'ទាក់ទង​មក​ពួក​យើង',
+    'deno': 'DENO',
     'noPackage': 'គ្មានកញ្ចប់',
     'totalAmount': 'ទឹកប្រាក់​សរុប',
     'transfers': 'ការផ្ទេរ',

@@ -3,10 +3,8 @@ import 'package:get/get.dart';
 import 'package:apploan/core/core.dart';
 
 class TotalDisburmentAmountWidget extends StatelessWidget {
-  const TotalDisburmentAmountWidget({
-    Key? key,
-    required this.codKhr,
-  }) : super(key: key);
+  const TotalDisburmentAmountWidget({Key? key, required this.codKhr})
+    : super(key: key);
 
   final String codKhr;
 
@@ -16,17 +14,14 @@ class TotalDisburmentAmountWidget extends StatelessWidget {
       height: 85,
       width: double.infinity,
       alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 14,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: AppColor.blue,
+        color: const Color(0xFFFE002A),
+        borderRadius: UIConstants.radius.radiusAll,
         image: DecorationImage(
           image: AssetImage(AssetPath.dashboard.path),
           fit: BoxFit.cover,
-          opacity: 0.6,
+          opacity: 0.35,
         ),
         border: Border.all(width: 1, color: AppColor.lightGrey),
       ),
@@ -40,14 +35,8 @@ class TotalDisburmentAmountWidget extends StatelessWidget {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                codKhr,
-                style: AppTextStyle.midWhiteSemiBold,
-              ),
-            ],
+            children: [Text(codKhr, style: AppTextStyle.midWhiteSemiBold)],
           ),
-
         ],
       ),
     );

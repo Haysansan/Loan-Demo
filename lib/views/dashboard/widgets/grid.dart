@@ -17,7 +17,10 @@ class GridItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: (Get.width * 0.5) - UIConstants.spacing - (UIConstants.midSpacing / 2),
+      width:
+          (Get.width * 0.5) -
+          UIConstants.spacing -
+          (UIConstants.midSpacing / 2),
       decoration: BoxDecoration(
         borderRadius: UIConstants.radius.radiusAll,
         color: AppColor.white,
@@ -40,11 +43,7 @@ class GridItemWidget extends StatelessWidget {
                 ),
                 UnconstrainedBox(
                   alignment: Alignment.centerRight,
-                  child: Icon(
-                    icon,
-                    color: AppColor.primary,
-                    size: 45,
-                  ),
+                  child: Icon(icon, color: AppColor.primary, size: 45),
                 ),
               ],
             ),
@@ -52,10 +51,7 @@ class GridItemWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Divider(
-                  color: AppColor.primary,
-                  thickness: 3,
-                ),
+                const Divider(color: AppColor.primary, thickness: 3),
                 Text(title, style: AppTextStyle.normalSecondaryRegular),
               ],
             ),

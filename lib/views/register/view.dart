@@ -16,7 +16,10 @@ class RegisterView extends GetView<RegisterController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(LocaleKeys.register.tr)),
+      appBar: CustomAppBar(
+        title: LocaleKeys.register.tr,
+        onBack: () => Navigator.pop(context, false),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Form(

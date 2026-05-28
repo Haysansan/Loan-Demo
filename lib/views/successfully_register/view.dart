@@ -9,7 +9,10 @@ class SuccessfulRegisterdView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(LocaleKeys.successfullyRegister.tr)),
+      appBar: CustomAppBar(
+        title: LocaleKeys.successfullyRegister.tr,
+        onBack: () => Navigator.pop(context, false),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -49,10 +52,7 @@ class SuccessfulRegisterdView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         15.height,
-                        Image.asset(
-                          AssetPath.checking.path,
-                          scale: 20,
-                        ),
+                        Image.asset(AssetPath.checking.path, scale: 20),
                         4.height,
                         Container(
                           decoration: BoxDecoration(
@@ -72,10 +72,7 @@ class SuccessfulRegisterdView extends StatelessWidget {
                     const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.warning,
-                          color: AppColor.red,
-                        ),
+                        Icon(Icons.warning, color: AppColor.red),
                         Text(
                           'ក្រុមរបស់យើងកុំពុងពិនិត្រមើលព័ត៏មានហាងរបស់អ្នក ហើយអ្នកនឹងត្រូវបានផ្តល់ព័ត៏មានចូលនៅពេលយើងបញ្ចាក់ថាយើងអាចប្រគល់ទំនិញរបស់អ្នកបាន។',
                           style: AppTextStyle.smallPrimaryRegular,
@@ -106,16 +103,9 @@ class SuccessfulRegisterdView extends StatelessWidget {
         padding: 1.padAll,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(
-            color: AppColor.grey,
-            width: 1,
-          ),
+          border: Border.all(color: AppColor.grey, width: 1),
         ),
-        child: Image.asset(
-          AssetPath.check.path,
-          height: 80,
-          width: 80,
-        ),
+        child: Image.asset(AssetPath.check.path, height: 80, width: 80),
       ),
     );
   }

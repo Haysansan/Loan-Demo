@@ -14,7 +14,10 @@ class ApiService extends GetxService {
 
   Logger get logger => Logger.root;
 
-  Future<d.Dio> _dioClient({bool? isShowLoading, bool requiresAuth = true}) async {
+  Future<d.Dio> _dioClient({
+    bool? isShowLoading,
+    bool requiresAuth = true,
+  }) async {
     final client = d.Dio(
       d.BaseOptions(
         followRedirects: false,
@@ -35,7 +38,9 @@ class ApiService extends GetxService {
     client.interceptors.add(LoadingInterceptor(isShow: isShowLoading ?? false));
 
     if (requiresAuth) {
-      client.interceptors.add(AuthenticationInterceptor(accessToken: AppConfig.shared.token));
+      client.interceptors.add(
+        AuthenticationInterceptor(accessToken: AppConfig.shared.token),
+      );
     }
 
     // DO NOT change order of these interceptors
@@ -78,22 +83,19 @@ class ApiService extends GetxService {
       }
     }
 
-    return client.get(
-      path,
-      queryParameters: queryParameters,
-    );
+    return client.get(path, queryParameters: queryParameters);
   }
 
   Future<d.Response> post(
-      String path,
-      dynamic formData, {
-        int retries = 2, // 🔁 CHANGED: default retries from null to 2
-        String? baseUrl,
-        bool encode = true,
-        Map<String, dynamic>? cusHeaders,
-        String? contentType,
-        bool? isShowLoading,
-      }) async {
+    String path,
+    dynamic formData, {
+    int retries = 2, // 🔁 CHANGED: default retries from null to 2
+    String? baseUrl,
+    bool encode = true,
+    Map<String, dynamic>? cusHeaders,
+    String? contentType,
+    bool? isShowLoading,
+  }) async {
     final client = await _dioClient(
       isShowLoading: isShowLoading,
       requiresAuth: path != EndPoints.login,
@@ -118,11 +120,12 @@ class ApiService extends GetxService {
       try {
         response = await client.post(
           path,
-          data: formData is d.FormData
-              ? formData
-              : encode
-              ? jsonEncode(formData)
-              : formData,
+          data:
+              formData is d.FormData
+                  ? formData
+                  : encode
+                  ? jsonEncode(formData)
+                  : formData,
         );
         return response; // ✅ ADDED: return on success
       } on DioException catch (e) {
@@ -132,18 +135,18 @@ class ApiService extends GetxService {
           rethrow; // ✅ ADDED: rethrow after max retries
         }
 
-        await Future.delayed(const Duration(seconds: 2)); // ✅ ADDED: delay before retry
+        await Future.delayed(
+          const Duration(seconds: 2),
+        ); // ✅ ADDED: delay before retry
       }
     }
 
-    throw Exception('Unexpected failure after retries'); // ✅ ADDED: fallback throw
+    throw Exception(
+      'Unexpected failure after retries',
+    ); // ✅ ADDED: fallback throw
   }
 
-
-  Future<d.Response> put(
-    String path, {
-    dynamic formData,
-  }) async {
+  Future<d.Response> put(String path, {dynamic formData}) async {
     final client = await _dioClient();
 
     return client.put(
@@ -152,19 +155,13 @@ class ApiService extends GetxService {
     );
   }
 
-  Future<d.Response> delete(
-    String path, {
-    dynamic data,
-  }) async {
+  Future<d.Response> delete(String path, {dynamic data}) async {
     final client = await _dioClient();
 
     return client.delete(path, data: data);
   }
 
-  Future<d.Response> patch(
-    String path, {
-    dynamic formData,
-  }) async {
+  Future<d.Response> patch(String path, {dynamic formData}) async {
     final client = await _dioClient();
 
     return client.patch(
