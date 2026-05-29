@@ -1,4 +1,6 @@
 enum Rule {
-  customer,
-  driver,
+  //  customer, driver,
+  co,
+  bm,
+  eco,
 }

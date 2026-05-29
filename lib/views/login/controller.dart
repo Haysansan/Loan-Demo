@@ -21,8 +21,10 @@ class LoginController extends GetxController {
   }
 
   Future<void> _onInit() async {
-    final String username = await SharedPreferencesManager.get(Credential.username.name) ?? '';
-    final String password = await SharedPreferencesManager.get(Credential.password.name) ?? '';
+    final String username =
+        await SharedPreferencesManager.get(Credential.username.name) ?? '';
+    final String password =
+        await SharedPreferencesManager.get(Credential.password.name) ?? '';
 
     if (username.isNotEmpty && password.isNotEmpty) {
       usernameCtl.text = username;
@@ -55,13 +57,11 @@ class LoginController extends GetxController {
       // Check if the response indicates failure
       if (res.statusCode != 200 || res.data['success'] == false) {
         // Get the error message from the response
-        final String errorMessage = res.data['message'] ?? 'Login failed. Please try again.';
+        final String errorMessage =
+            res.data['message'] ?? 'Login failed. Please try again.';
 
         // Show error dialog with the message
-        DialogManager.showDialog(
-          title: 'Error',
-          subTitle: errorMessage,
-        );
+        DialogManager.showDialog(title: 'Error', subTitle: errorMessage);
         return;
       }
 
@@ -73,8 +73,9 @@ class LoginController extends GetxController {
       final String token = login.token;
 
       if (permission.isNotEmpty &&
-          permission != Rule.customer.name &&
-          permission != Rule.driver.name) {
+          permission != Rule.co.name &&
+          permission != Rule.bm.name &&
+          permission != Rule.eco.name) {
         DialogManager.showDialog(
           title: LocaleKeys.permission.tr,
           subTitle: LocaleKeys.noPermission.tr,
@@ -87,35 +88,42 @@ class LoginController extends GetxController {
       //await _getProfile(login.user_id);
 
       await SharedPreferencesManager.setValue(Credential.token.name, token);
-      await SharedPreferencesManager.setValue(Credential.username.name, usernameCtl.text);
-      await SharedPreferencesManager.setValue(Credential.password.name, passCtl.text);
-      await SharedPreferencesManager.setValue(Credential.branch_id.name, login.branch_id);
-      await SharedPreferencesManager.setValue(Credential.user_id.name, login.user_id);
+      await SharedPreferencesManager.setValue(
+        Credential.username.name,
+        usernameCtl.text,
+      );
+      await SharedPreferencesManager.setValue(
+        Credential.password.name,
+        passCtl.text,
+      );
+      await SharedPreferencesManager.setValue(
+        Credential.branch_id.name,
+        login.branch_id,
+      );
+      await SharedPreferencesManager.setValue(
+        Credential.user_id.name,
+        login.user_id,
+      );
 
       DialogManager.hideLoading();
       Get.offAllNamed(Routes.start);
-
     } catch (e) {
       if (isClosed) {
         return;
       }
       // Generic error handling
-      String errorMessage = 'Login failed. Please check your credentials and try again.';
+      String errorMessage =
+          'Login failed. Please check your credentials and try again.';
 
       // Show error dialog
-      DialogManager.showDialog(
-        title: 'Error',
-        subTitle: errorMessage,
-      );
+      DialogManager.showDialog(title: 'Error', subTitle: errorMessage);
 
       ExceptionHandler.handleException(e);
     }
   }
 
   Future<void> _getProfile(int UserId) async {
-    final Map<String, dynamic> params = {
-      'id': UserId,
-    };
+    final Map<String, dynamic> params = {'id': UserId};
     try {
       final res = await Get.find<ApiService>().get(
         EndPoints.profile,

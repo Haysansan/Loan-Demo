@@ -85,7 +85,7 @@ class WrittenoffController extends GetxController {
 
       String endPoint = EndPoints.getWrittenOffList;
 
-      // if (UserRepository.shared.isDriver) {
+      // if (UserRepository.shared.isCo) {
       // endPoint = EndPoints.getWrittenOffList;
       // }
 

@@ -74,7 +74,7 @@ class SyncDataView extends GetView<SyncDataController> {
                       LinearProgressIndicator(
                         value: controller.progress.value,
                         backgroundColor: Colors.grey[300],
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
                       ),
                       SizedBox(height: 20),
                       Text(

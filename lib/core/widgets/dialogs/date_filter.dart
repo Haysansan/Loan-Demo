@@ -4,9 +4,7 @@ import 'package:apploan/core/core.dart';
 import 'package:apploan/views/views.dart';
 
 class DateFilterDialog extends StatelessWidget {
-  DateFilterDialog({
-    Key? key,
-  }) : super(key: key);
+  DateFilterDialog({Key? key}) : super(key: key);
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final PaymentListController paymentCtl = Get.find<PaymentListController>();
@@ -34,8 +32,6 @@ class DateFilterDialog extends StatelessWidget {
               10.height,
 
               // Start date
-
-
               30.height,
 
               PrimaryButton(
@@ -45,11 +41,9 @@ class DateFilterDialog extends StatelessWidget {
                     return;
                   }
                   Get.back();
-                  if (UserRepository.shared.isDriver) {
-
+                  if (UserRepository.shared.isCO) {
                     return;
                   }
-
                 },
               ),
             ],

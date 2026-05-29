@@ -17,11 +17,10 @@ class BottomBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-      InkWell(
+    return InkWell(
       onTap: onTap,
       child: SizedBox(
-        width: UserRepository.shared.isDriver ? 85 : 80,
+        width: UserRepository.shared.isCO ? 85 : 80,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -33,7 +32,10 @@ class BottomBarWidget extends StatelessWidget {
             4.height,
             Text(
               label,
-              style: isSelected ? AppTextStyle.smallRedRegular : AppTextStyle.smallPrimaryRegular,
+              style:
+                  isSelected
+                      ? AppTextStyle.smallRedRegular
+                      : AppTextStyle.smallPrimaryRegular,
             ),
           ],
         ),

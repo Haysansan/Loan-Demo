@@ -105,7 +105,7 @@ class CustomersController extends GetxController {
       };
 
       String endPoint = EndPoints.getClientList;
-      if (UserRepository.shared.isDriver) {
+      if (UserRepository.shared.isCO) {
         endPoint = EndPoints.repayment;
       }
 

@@ -49,7 +49,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 //       };
 //
 //       String endPoint = EndPoints.repayment;
-//       if (UserRepository.shared.isDriver) {
+//       if (UserRepository.shared.isCo) {
 //         endPoint = EndPoints.repayment;
 //       }
 //
@@ -249,7 +249,7 @@ class SyncDataController extends GetxController {
       };
 
       String endPoint = EndPoints.repayment;
-      if (UserRepository.shared.isDriver) {
+      if (UserRepository.shared.isCO) {
         endPoint = EndPoints.repayment;
       }
 

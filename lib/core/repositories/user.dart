@@ -34,20 +34,31 @@ class UserRepository {
     _profile = profile;
   }
 
-  bool _isDriver = false;
-  bool get isDriver => _isDriver;
   void setUserType(String value) {
+    _isCO = false;
+    _isBM = false;
+    _isEco = false;
     switch (value) {
-      case 'driver':
-        _isDriver = true;
+      case 'Credit Officer':
+        _isCO = true;
         break;
-      default:
-        _isDriver = false;
+      case 'Branch Manager':
+        _isBM = true;
+        break;
+      case 'Ceo':
+        _isEco = true;
+        break;
     }
   }
 
   bool _isTablet = false;
+  bool _isCO = false;
+  bool _isBM = false;
+  bool _isEco = false;
   bool get isTablet => _isTablet;
+  bool get isCO => _isCO;
+  bool get isBM => _isBM;
+  bool get isEco => _isEco;
 
   BuildContext? _context;
   BuildContext? get context => _context;

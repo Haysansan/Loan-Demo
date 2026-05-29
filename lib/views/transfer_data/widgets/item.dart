@@ -18,7 +18,7 @@ class TransferItemWidget extends StatelessWidget {
       children: [
         // InkWell(
         //   onTap: () {
-        //     if (!UserRepository.shared.isDriver) {
+        //     if (!UserRepository.shared.isCo) {
         //       final StartController startCtl = Get.find<StartController>();
         //       startCtl.selectedIndex.value = 2;
         //       startCtl.selectedScreen.value = const TrackingView();

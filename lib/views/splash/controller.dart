@@ -50,37 +50,35 @@ class SplashController extends GetxController
         Get.offAllNamed(Routes.login);
       });
       return;
-    }else{
+    } else {
       Future.delayed(const Duration(seconds: 3)).then((value) {
         controller.stop();
         Get.offAllNamed(Routes.start);
       });
-
     }
     //
 
-    //
-    // try {
-    //   // final res = await Get.find<ApiService>().get(
-    //   //   '${EndPoints.profile}?user_id=$userID',
-    //   //   isShowLoading: false,
-    //   // );
-    //   // final data = getPropertyFromJson(res.data, 'data');
-    //   // if (data != null) {
-    //   //   final ProfileModel profile = ProfileModel.fromJson(data);
-    //   //   UserRepository.shared.setProfile(profile);
-    //   //   controller.stop();
-    //   //   Get.offAllNamed(Routes.start);
-    //   //   return;
-    //   // }
-    //   controller.stop();
-    //   Get.offAllNamed(Routes.login);
-    // } catch (e) {
-    //   if (isClosed) {
-    //     return;
-    //   }
-    //   controller.stop();
-    //   Get.offAllNamed(Routes.login);
-    // }
+    try {
+      final res = await Get.find<ApiService>().get(
+        '${EndPoints.profile}?user_id=$userID',
+        isShowLoading: false,
+      );
+      final data = getPropertyFromJson(res.data, 'data');
+      if (data != null) {
+        final ProfileModel profile = ProfileModel.fromJson(data);
+        UserRepository.shared.setProfile(profile);
+        controller.stop();
+        Get.offAllNamed(Routes.start);
+        return;
+      }
+      controller.stop();
+      Get.offAllNamed(Routes.login);
+    } catch (e) {
+      if (isClosed) {
+        return;
+      }
+      controller.stop();
+      Get.offAllNamed(Routes.login);
+    }
   }
 }
