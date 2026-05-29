@@ -6,7 +6,9 @@ import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http_parser/http_parser.dart';
 
 class AddCustomersController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -36,6 +38,8 @@ class AddCustomersController extends GetxController {
   final RxList<VillageModel> VillageList = <VillageModel>[].obs;
   final Rx<String?> selectedCustomer = Rx<String?>(null);
   final List<String> genderItems = ['Female', 'Male'];
+  //Image
+  final Rxn<XFile> profileImage = Rxn<XFile>();
 
   ProvinceModel? ProvinceSelected;
   DistrictModel? DistrictSelected;
@@ -47,6 +51,15 @@ class AddCustomersController extends GetxController {
   //   IdNameModel(id: 1, name: 'Female'),
   //   IdNameModel(id: 2, name: 'Male'),
   // ];
+
+  void pickProfileImage() {
+    ImagePickerManager.pickImage((file) {
+      if (file != null) {
+        profileImage.value = file;
+      }
+    });
+  }
+
   void selectGender(String value) {
     selectedCustomer.value = value;
   }
@@ -309,6 +322,12 @@ class AddCustomersController extends GetxController {
         'village_id': VillageSelected?.id,
         'branch_id': branchId,
         'user_id': userId,
+        if (profileImage.value != null)
+          'photo': await dio.MultipartFile.fromFile(
+            profileImage.value!.path,
+            filename: profileImage.value!.name,
+            contentType: MediaType('image', 'jpeg'),
+          ),
       });
 
       await Get.find<ApiService>().post(

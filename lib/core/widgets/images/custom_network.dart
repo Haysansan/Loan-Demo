@@ -1,3 +1,4 @@
+import 'package:apploan/flavor/app_config.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,10 +19,16 @@ class CustomNetworkImage extends StatelessWidget {
   final double? height;
   final BoxFit? fit;
 
+  String get _resolvedUrl {
+    if (imageUrl.startsWith('http')) return imageUrl;
+    final base = AppConfig.shared.baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+    return '$base$imageUrl';
+  }
+
   @override
   Widget build(BuildContext context) {
     return CachedNetworkImage(
-      imageUrl: imageUrl,
+      imageUrl: _resolvedUrl,
       width: width ?? Get.width,
       height: height ?? Get.height,
       fadeInDuration: const Duration(milliseconds: 200),

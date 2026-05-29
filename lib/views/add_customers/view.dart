@@ -5,6 +5,7 @@ import 'package:apploan/views/views.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'dart:io';
 
 class AddCustomersView extends GetView<AddCustomersController> {
   const AddCustomersView({Key? key}) : super(key: key);
@@ -32,6 +33,54 @@ class AddCustomersView extends GetView<AddCustomersController> {
                   children: [
                     UIConstants.spacing.height,
                     // Total amount
+                    Center(
+                      child: Obx(() {
+                        return GestureDetector(
+                          onTap: controller.pickProfileImage,
+                          child: Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundColor: AppColor.lightGrey,
+                                backgroundImage:
+                                    controller.profileImage.value != null
+                                        ? FileImage(
+                                          File(
+                                            controller.profileImage.value!.path,
+                                          ),
+                                        )
+                                        : null,
+                                child:
+                                    controller.profileImage.value == null
+                                        ? const Icon(
+                                          Icons.person,
+                                          size: 50,
+                                          color: AppColor.grey,
+                                        )
+                                        : null,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: const BoxDecoration(
+                                    color: AppColor.primary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    size: 16,
+                                    color: AppColor.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ),
+                    UIConstants.spacing.height,
                     Column(
                       children: [
                         Row(
