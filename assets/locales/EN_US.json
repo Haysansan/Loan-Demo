@@ -222,5 +222,6 @@
   "repayment": "Repayment",
   "totalOS": "Total OS",
   "totalClient": "And Total Client",
-  "deno": "DENO"
+  "deno": "DENO",
+  "approveLoans": "Approve Loans"
 }

@@ -64,6 +64,7 @@ class LocaleKeys {
   static const termAndCondition = 'termAndCondition';
   static const contactUs = 'contactUs';
   static const deno = 'deno';
+  static const approveLoans = 'approveLoans';
   static const noPackage = 'noPackage';
   static const totalAmount = 'totalAmount';
   static const deliveriesC = 'deliveriesC';
@@ -352,6 +353,7 @@ class Locales {
     'termAndCondition': 'Term and Conditions',
     'contactUs': 'Contact Us',
     'deno': 'DENO',
+    'approveLoans': 'Approve Loans',
     'noPackage': 'No Package',
     'totalAmount': 'Total amount',
     'deliveriesC': 'DELIVERIES',
@@ -638,6 +640,7 @@ class Locales {
     'termAndCondition': 'លក្ខខណ្ឌ',
     'contactUs': 'ទាក់ទង​មក​ពួក​យើង',
     'deno': 'DENO',
+    'approveLoans': 'អនុម័ត​កម្ចី',
     'noPackage': 'គ្មានកញ្ចប់',
     'totalAmount': 'ទឹកប្រាក់​សរុប',
     'transfers': 'ការផ្ទេរ',

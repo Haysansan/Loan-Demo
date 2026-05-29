@@ -27,7 +27,7 @@ class Routes {
   static const String loandisbursments = '/loandisbursments';
   static const String prepaid = '/prepaid';
   static const String writtenoff = '/writtenoff';
-
+  static const String approveLoans = '/approve-loans';
   static const String arealoan = '/arealoan';
   static const String customers = '/customers';
   static const String addCustomer = '/addCustomer';
@@ -156,7 +156,11 @@ class Routes {
       page: () => const PaidOffView(),
       binding: PaidOffBinding(),
     ),
-
+    GetPage(
+      name: approveLoans,
+      page: () => const ApproveLoansView(),
+      binding: ApproveLoansBinding(),
+    ),
     GetPage(name: dino, page: () => DinoView(), binding: DinoBinding()),
   ];
 }

@@ -17,11 +17,12 @@ class DashboardWidget extends StatelessWidget {
     LocaleKeys.payforearchother.tr,
     LocaleKeys.datasync.tr,
     LocaleKeys.datatransfer.tr,
-
     'DENO',
+    LocaleKeys.approveLoans.tr,
   ];
   List<Color> catColors = [
     // Color(0xFF5DAFF1),
+    Color(0xFFF21A3E),
     Color(0xFFF21A3E),
     Color(0xFFF21A3E),
     Color(0xFFF21A3E),
@@ -52,8 +53,8 @@ class DashboardWidget extends StatelessWidget {
     Image.asset('assets/images/icon/paidofother.png', width: 35, height: 35),
     Image.asset('assets/images/icon/sync.png', width: 35, height: 35),
     Image.asset('assets/images/icon/transfer.png', width: 35, height: 35),
-
     Image.asset('assets/images/icon/transfer.png', width: 35, height: 35),
+    Image.asset('assets/images/icon/repayment.png', width: 35, height: 35),
   ];
   List getReport = ["អតិថិជនបានបង់", "អតិថិជនមិនបានបង់", "អតិថិជនត្រូវប្រមូល"];
 
@@ -123,6 +124,11 @@ class DashboardWidget extends StatelessWidget {
   void moneyCount() {
     Get.back();
     Get.toNamed(Routes.dino);
+  }
+
+  void Approval() {
+    Get.back();
+    Get.toNamed(Routes.approveLoans);
   }
 
   @override
@@ -198,6 +204,9 @@ class DashboardWidget extends StatelessWidget {
                             } else if (catName[index] ==
                                 LocaleKeys.writtenoff.tr) {
                               WrittenOffHandleTap();
+                            } else if (catName[index] ==
+                                LocaleKeys.approveLoans.tr) {
+                              Approval();
                             } else {
                               DialogManager.showDialog(
                                 title: LocaleKeys.commingSoon.tr,
@@ -224,6 +233,7 @@ class DashboardWidget extends StatelessWidget {
                                               7,
                                               8,
                                               9,
+                                              10,
                                             ].contains(index)
                                             ? catColors[index]
                                             : Color(0xFFA88787),
