@@ -1,0 +1,306 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:apploan/core/core.dart';
+import 'package:apploan/models/models.dart';
+import 'package:apploan/views/views.dart';
+
+/// The card displayed for each loan in the approval list.
+class LoanApprovalCard extends StatelessWidget {
+  const LoanApprovalCard({
+    Key? key,
+    required this.loan,
+    required this.controller,
+  }) : super(key: key);
+
+  final LoanApprovalModel loan;
+  final ApproveLoansController controller;
+
+  String _formatAmount(String raw) {
+    final num? value = num.tryParse(raw);
+    if (value == null) return raw;
+    return '${NumberFormat('#,###').format(value)} ៛';
+  }
+
+  // ─── Status badge color ───
+  Color _statusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'approved':
+        return Colors.green;
+      case 'rejected':
+        return AppColor.red;
+      default: // pending
+        return Colors.grey;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: UIConstants.radius.radiusAll,
+        border: Border.all(color: AppColor.lightGrey),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Header: avatar | name + branch + date | status badge ───
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile photo (falls back to placeholder automatically)
+                CircleAvatar(
+                  radius: 28,
+                  backgroundColor: AppColor.lightGrey,
+                  child: ClipOval(
+                    child: CustomNetworkImage(
+                      imageUrl: loan.photo,
+                      width: 56,
+                      height: 56,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+
+                // Name / branch / date
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        loan.client,
+                        style: AppTextStyle.normalPrimarySemiBold,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Branch: ${loan.branch}',
+                        style: AppTextStyle.smallGreyRegular,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        loan.submittedAt,
+                        style: AppTextStyle.smallGreyRegular,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Status badge
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: _statusColor(loan.status)),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    loan.status,
+                    style: TextStyle(
+                      color: _statusColor(loan.status),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const DarkGreyDivider(),
+
+          // ── Credit Officer ──
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: RichText(
+              text: TextSpan(
+                style: AppTextStyle.normalPrimaryRegular,
+                children: [
+                  const TextSpan(text: 'Credit Officer: '),
+                  TextSpan(
+                    text: loan.creditOfficer,
+                    style: AppTextStyle.normalPrimarySemiBold,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const DarkGreyDivider(),
+
+          // ── Loan details grid (2 × 2) ──
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Column(
+              children: [
+                // Row 1: Loan amount | Interest rate
+                Row(
+                  children: [
+                    _detailCell(
+                      label: 'Loan amount',
+                      value: _formatAmount(loan.loanAmount),
+                      valueColor: AppColor.red,
+                      valueBold: true,
+                    ),
+                    _detailCell(
+                      label: 'Interest rate',
+                      value: loan.interestRate,
+                      valueBold: true,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // Row 2: Start date | End date
+                Row(
+                  children: [
+                    _detailCell(
+                      label: 'Start date',
+                      value: loan.startDate,
+                      valueBold: true,
+                    ),
+                    _detailCell(
+                      label: 'End date',
+                      value: loan.endDate,
+                      valueBold: true,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const DarkGreyDivider(),
+
+          // ── Product name ───
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Text(loan.productName, style: AppTextStyle.smallGreyRegular),
+          ),
+          const DarkGreyDivider(),
+
+          // ── Comment text field ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+            child: TextField(
+              controller: controller.getCommentController(loan.id),
+              decoration: InputDecoration(
+                hintText: 'Add a comment',
+                hintStyle: AppTextStyle.normalLightGreyRegular,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: UIConstants.radius.radiusAll,
+                  borderSide: const BorderSide(color: AppColor.lightGrey),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: UIConstants.radius.radiusAll,
+                  borderSide: const BorderSide(color: AppColor.lightGrey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: UIConstants.radius.radiusAll,
+                  borderSide: const BorderSide(color: AppColor.lightGrey),
+                ),
+              ),
+            ),
+          ),
+
+          // ── Approve / Reject buttons ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 4, 12, 14),
+            child: Row(
+              children: [
+                // Approve
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => controller.approveLoan(loan),
+                    icon: const Icon(
+                      Icons.check,
+                      color: Colors.green,
+                      size: 18,
+                    ),
+                    label: const Text(
+                      'Approve',
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: const BorderSide(color: Colors.green, width: 1.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: UIConstants.radius.radiusAll,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Reject
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => controller.rejectLoan(loan),
+                    icon: const Icon(
+                      Icons.close,
+                      color: AppColor.red,
+                      size: 18,
+                    ),
+                    label: const Text(
+                      'Reject',
+                      style: TextStyle(
+                        color: AppColor.red,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: const BorderSide(color: AppColor.red, width: 1.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: UIConstants.radius.radiusAll,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _detailCell({
+    required String label,
+    required String value,
+    Color? valueColor,
+    bool valueBold = false,
+  }) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: AppTextStyle.smallGreyRegular),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: valueBold ? FontWeight.bold : FontWeight.normal,
+              color: valueColor ?? AppColor.primaryText,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
