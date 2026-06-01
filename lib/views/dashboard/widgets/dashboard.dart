@@ -72,21 +72,13 @@ class DashboardWidget extends StatelessWidget {
   ];
 
   // BM / CEO only see these key indices
-  static const _bmCeoIndices = [
-    3,
-    6,
-    2,
-    10,
-    7,
-    8,
-  ]; // customers, payother, arrear, approve, sync, transfer
+  static const _bmCeoIndices = [3, 6, 2, 10, 7, 8];
 
-  /// Returns filtered parallel lists based on the current user's role.
   (List catNames, List<Color> catColors, List<Widget> catIcons)
   _buildFilteredLists() {
     final user = UserRepository.shared;
 
-    // BM or CEO: restricted set only
+    // BM or CEO:
     if (user.isBM || user.isEco) {
       final names = _bmCeoIndices.map((i) => catName[i]).toList();
       final colors = _bmCeoIndices.map((i) => catColors[i]).toList();
@@ -94,7 +86,7 @@ class DashboardWidget extends StatelessWidget {
       return (names, colors, icons);
     }
 
-    // CO: everything except approveLoans (index 10)
+    // CO:
     if (user.isCO) {
       const coIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // skip 10
       final names = coIndices.map((i) => catName[i]).toList();
@@ -200,6 +192,11 @@ class DashboardWidget extends StatelessWidget {
                           childAspectRatio: 1.2,
                         ),
                         itemBuilder: (context, index) {
+                          // For future use: if some features are coming soon, we can disable them here based on their index or name
+                          // final isComingSoon =
+                          //     catNames[index] == LocaleKeys.prepaid.tr;
+                          final isComingSoon =
+                              false; //right now no unavailable features]
                           return InkWell(
                             onTap: () {
                               if (catNames[index] ==
@@ -250,9 +247,9 @@ class DashboardWidget extends StatelessWidget {
                                     width: 60,
                                     decoration: BoxDecoration(
                                       color:
-                                          index < catColors.length
-                                              ? catColors[index]
-                                              : const Color(0xFFA88787),
+                                          isComingSoon
+                                              ? const Color(0xFFA88787)
+                                              : catColors[index],
                                       shape: BoxShape.circle,
                                     ),
                                     child: Center(child: catIcons[index]),
