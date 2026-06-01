@@ -104,6 +104,11 @@ class LoginController extends GetxController {
         Credential.user_id.name,
         login.user_id,
       );
+      await SharedPreferencesManager.setValue(
+        Credential.permission.name,
+        login.permission,
+      );
+      UserRepository.shared.setUserTypeFromPermission(login.permission);
 
       DialogManager.hideLoading();
       Get.offAllNamed(Routes.start);

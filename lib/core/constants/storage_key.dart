@@ -2,17 +2,10 @@ enum LanguageKey { language }
 
 enum Language {
   en('EN'),
-  kh('KH'),
-  ;
+  kh('KH');
 
   final String key;
   const Language(this.key);
 }
 
-enum Credential {
-  token,
-  username,
-  password,
-  user_id,
-  branch_id
-}
+enum Credential { token, username, password, user_id, branch_id, permission }

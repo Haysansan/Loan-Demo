@@ -17,7 +17,7 @@ class DashboardWidget extends StatelessWidget {
     LocaleKeys.payforearchother.tr,
     LocaleKeys.datasync.tr,
     LocaleKeys.datatransfer.tr,
-    'DENO',
+    LocaleKeys.deno.tr,
     LocaleKeys.approveLoans.tr,
   ];
   List<Color> catColors = [
@@ -70,6 +70,42 @@ class DashboardWidget extends StatelessWidget {
     Icon(Icons.summarize, color: Colors.white, size: 30),
     // Icon(Icons.approval,color: Colors.white,size: 30),
   ];
+
+  // BM / CEO only see these key indices
+  static const _bmCeoIndices = [
+    3,
+    6,
+    2,
+    10,
+    7,
+    8,
+  ]; // customers, payother, arrear, approve, sync, transfer
+
+  /// Returns filtered parallel lists based on the current user's role.
+  (List catNames, List<Color> catColors, List<Widget> catIcons)
+  _buildFilteredLists() {
+    final user = UserRepository.shared;
+
+    // BM or CEO: restricted set only
+    if (user.isBM || user.isEco) {
+      final names = _bmCeoIndices.map((i) => catName[i]).toList();
+      final colors = _bmCeoIndices.map((i) => catColors[i]).toList();
+      final icons = _bmCeoIndices.map((i) => catIcons[i]).toList();
+      return (names, colors, icons);
+    }
+
+    // CO: everything except approveLoans (index 10)
+    if (user.isCO) {
+      const coIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // skip 10
+      final names = coIndices.map((i) => catName[i]).toList();
+      final colors = coIndices.map((i) => catColors[i]).toList();
+      final icons = coIndices.map((i) => catIcons[i]).toList();
+      return (names, colors, icons);
+    }
+
+    // Fallback: show all
+    return (catName, catColors, catIcons);
+  }
 
   void RepaymentHandleTap() {
     Get.back();
@@ -134,164 +170,116 @@ class DashboardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // decoration: BoxDecoration(
-      //   image: DecorationImage(
-      //     image: AssetImage("assets/images/background-2.jpg"),
-      //     fit: BoxFit.fill,
-      //   ),
-      // ),
-      margin: const EdgeInsets.symmetric(
-        horizontal: 16,
-      ), // ← same as summary card
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.65),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            child: Container(
-              child: Padding(
-                padding: EdgeInsets.only(top: 25, left: 1, right: 1),
-                child: Column(
-                  children: [
-                    GridView.builder(
-                      itemCount: catName.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        childAspectRatio: 1.2,
-                      ),
-                      itemBuilder: (context, index) {
-                        return new InkWell(
-                          onTap: () {
-                            // if (catName[index] ==
-                            //     LocaleKeys.loanCalculator.tr) {
-                            //   LoanCalculatorHandleTap();
-                            // }
-                            if (catName[index] ==
-                                LocaleKeys.loanDisbursments.tr) {
-                              LoanDisbursmentsHandleTap();
-                            } else if (catName[index] ==
-                                LocaleKeys.areaLoan.tr) {
-                              AreaLoanHandleTap();
-                            } else if (catName[index] ==
-                                LocaleKeys.customers.tr) {
-                              CustomersHandleTap();
-                            }
-                            // if (catName[index] == LocaleKeys.writtenoff.tr) {
-                            //   WrittenOffHandleTap();
-                            // }
-                            else if (catName[index] ==
-                                LocaleKeys.payforearchother.tr) {
-                              PayForEeachOtherHandleTap();
-                            } else if (catName[index] ==
-                                LocaleKeys.repaymentLoan.tr) {
-                              RepaymentHandleTap();
-                            } else if (catName[index] ==
-                                LocaleKeys.datasync.tr) {
-                              SyncDataHandleTap();
-                            } else if (catName[index] ==
-                                LocaleKeys.datatransfer.tr) {
-                              TransferDataHandleTap();
-                            } else if (catName[index] ==
-                                LocaleKeys.prepaid.tr) {
-                              PrePaidHandleTap();
-                            } else if (catName[index] == 'DENO') {
-                              moneyCount();
-                            } else if (catName[index] ==
-                                LocaleKeys.writtenoff.tr) {
-                              WrittenOffHandleTap();
-                            } else if (catName[index] ==
-                                LocaleKeys.approveLoans.tr) {
-                              Approval();
-                            } else {
-                              DialogManager.showDialog(
-                                title: LocaleKeys.commingSoon.tr,
-                                subTitle: LocaleKeys.futureUpdate.tr,
-                              );
-                            }
-                          },
-                          child: Ink(
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        [
-                                              0,
-                                              1,
-                                              2,
-                                              3,
-                                              4,
-                                              5,
-                                              6,
-                                              7,
-                                              8,
-                                              9,
-                                              10,
-                                            ].contains(index)
-                                            ? catColors[index]
-                                            : Color(0xFFA88787),
-                                    shape: BoxShape.circle,
+      child: Obx(() {
+        // Rebuild when permission changes
+        final _ = UserRepository.shared.permission;
+
+        // Get filtered menu items
+        final (catNames, catColors, catIcons) = _buildFilteredLists();
+
+        return Stack(
+          children: [
+            Positioned(
+              child: Container(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 25, left: 1, right: 1),
+                  child: Column(
+                    children: [
+                      GridView.builder(
+                        itemCount: catNames.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 1.2,
+                        ),
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              if (catNames[index] ==
+                                  LocaleKeys.loanDisbursments.tr) {
+                                LoanDisbursmentsHandleTap();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.areaLoan.tr) {
+                                AreaLoanHandleTap();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.customers.tr) {
+                                CustomersHandleTap();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.payforearchother.tr) {
+                                PayForEeachOtherHandleTap();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.repaymentLoan.tr) {
+                                RepaymentHandleTap();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.datasync.tr) {
+                                SyncDataHandleTap();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.datatransfer.tr) {
+                                TransferDataHandleTap();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.prepaid.tr) {
+                                PrePaidHandleTap();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.deno.tr) {
+                                moneyCount();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.writtenoff.tr) {
+                                WrittenOffHandleTap();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.approveLoans.tr) {
+                                Approval();
+                              } else {
+                                DialogManager.showDialog(
+                                  title: LocaleKeys.commingSoon.tr,
+                                  subTitle: LocaleKeys.futureUpdate.tr,
+                                );
+                              }
+                            },
+                            child: Ink(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 60,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          index < catColors.length
+                                              ? catColors[index]
+                                              : const Color(0xFFA88787),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(child: catIcons[index]),
                                   ),
-                                  child: Center(child: catIcons[index]),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  catName[index],
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black87,
+                                  SizedBox(height: 5),
+                                  Text(
+                                    catNames[index],
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    //     Text("",
-                    //       style: TextStyle(
-                    //         fontSize: 10,
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //     TextButton(
-                    //       onPressed: () {},
-                    //       style: ButtonStyle(),
-                    //       child: Row(
-                    //         mainAxisSize: MainAxisSize.min,
-                    //         children: [
-                    //           Text(LocaleKeys.more.tr,
-                    //               style: TextStyle(
-                    //                 fontSize: 14,
-                    //                 fontWeight: FontWeight.bold,
-                    //                 color: Color(0xFF650386),
-                    //               )
-                    //           ),
-                    //           SizedBox(width: 8), // Optional spacing between text and icon
-                    //           Icon(Icons.arrow_forward_ios_rounded,color: Color(0xFF650386),size: 14,),
-                    //         ],
-                    //       ),
-                    //     )
-                    //   ],
-                    // ),
-                  ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 }

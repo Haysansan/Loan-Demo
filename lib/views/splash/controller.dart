@@ -77,8 +77,13 @@ class SplashController extends GetxController
       if (isClosed) {
         return;
       }
+      // restore role from the permission saved at login time
+      final savedPermission =
+          await SharedPreferencesManager.get(Credential.permission.name) ?? '';
+      UserRepository.shared.setUserTypeFromPermission(savedPermission);
+
       controller.stop();
-      Get.offAllNamed(Routes.login);
+      Get.offAllNamed(Routes.start);
     }
   }
 }

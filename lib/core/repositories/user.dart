@@ -20,6 +20,9 @@ class UserRepository {
   final String _phoneNumber = '078 358 272';
   String get phoneNumber => _phoneNumber.replaceAll('@', '');
 
+  final RxString _permission = ''.obs;
+  String get permission => _permission.value;
+
   late ProfileModel _profile;
   ProfileModel get profile => _profile;
 
@@ -46,6 +49,24 @@ class UserRepository {
         _isBM = true;
         break;
       case 'Ceo':
+        _isEco = true;
+        break;
+    }
+  }
+
+  void setUserTypeFromPermission(String value) {
+    _permission.value = value.toLowerCase(); // ← triggers Obx rebuild
+    _isCO = false;
+    _isBM = false;
+    _isEco = false;
+    switch (value.toLowerCase()) {
+      case 'co':
+        _isCO = true;
+        break;
+      case 'bm':
+        _isBM = true;
+        break;
+      case 'eco':
         _isEco = true;
         break;
     }
