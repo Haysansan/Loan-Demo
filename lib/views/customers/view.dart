@@ -135,12 +135,21 @@ class CustomersView extends GetView<CustomersController> {
           ],
         );
       }),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFFFFDDE3),
-        onPressed: AddCustomerHandleTap,
-        tooltip: 'Perform Action',
-        child: const Icon(Icons.add, color: Colors.red),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: const Color(0xFFFFDDE3),
+      //   onPressed: AddCustomerHandleTap,
+      //   tooltip: 'Perform Action',
+      //   child: const Icon(Icons.add, color: Colors.red),
+      // ),
+      floatingActionButton:
+          UserRepository.shared.isCO
+              ? FloatingActionButton(
+                backgroundColor: const Color(0xFFFFDDE3),
+                onPressed: AddCustomerHandleTap,
+                tooltip: 'Perform Action',
+                child: const Icon(Icons.add, color: Colors.red),
+              )
+              : null,
     );
   }
 
