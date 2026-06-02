@@ -3,6 +3,7 @@ import 'package:apploan/core/resources/locales.g.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:apploan/routes.dart';
+import 'package:apploan/views/views.dart';
 
 class DashboardWidget extends StatelessWidget {
   @override
@@ -145,6 +146,7 @@ class DashboardWidget extends StatelessWidget {
   }
 
   void CustomersHandleTap() {
+    Get.delete<CustomersController>(force: true);
     Get.back();
     Get.toNamed(Routes.customers);
   }
