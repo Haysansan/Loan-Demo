@@ -18,7 +18,10 @@ class DisburmentListView extends GetView<DisburmentListController> {
     return Scaffold(
       appBar: CustomAppBar(
         title: LocaleKeys.loanDisbursmentsList.tr,
-        onBack: () => Navigator.pop(context, false),
+        onBack: () {
+          final startCtl = Get.find<StartController>();
+          startCtl.changeMenu(startCtl.previousIndex.value);
+        },
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -92,7 +95,9 @@ class DisburmentListView extends GetView<DisburmentListController> {
                     child: ListView.builder(
                       itemCount: controller.disburment.length,
                       itemBuilder: (context, index) {
-                        return EndsChildWidget(
+                        return CustomsTimeLinesWidget(
+                          isFirst: index == 0,
+                          isLast: index == controller.disburment.length - 1,
                           tracking: controller.disburment[index],
                         );
                       },

@@ -5,6 +5,7 @@ import 'package:apploan/views/views.dart';
 
 class StartController extends GetxController {
   final RxInt selectedIndex = 0.obs;
+  final RxInt previousIndex = 0.obs;
   late Rx<Widget> selectedScreen = screens[0].obs;
   static List<Widget> screens = [const DashboardView()];
 
@@ -37,6 +38,7 @@ class StartController extends GetxController {
   }) async {
     // if (index == 2) {
     // } else {
+    previousIndex.value = selectedIndex.value;
     selectedIndex.value = index;
     selectedScreen.value = screens[selectedIndex.value];
 
