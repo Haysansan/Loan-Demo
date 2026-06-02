@@ -259,7 +259,12 @@ class SyncDataController extends GetxController {
         isShowLoading: false,
       );
 
-      final data = getPropertyFromJson(res.data, 'data');
+      final rawData = getPropertyFromJson(res.data, 'data');
+      final List<dynamic> data =
+          rawData is List
+              ? rawData
+              : (rawData is Map ? (rawData['data'] as List? ?? []) : []);
+
       for (var item
           in data.map((json) => RepaymentModel.fromJson(json)).toList()) {
         await DatabaseHelper.instance.insertRepayment({
@@ -307,7 +312,12 @@ class SyncDataController extends GetxController {
         queryParameters: params,
       );
 
-      final data = getPropertyFromJson(res.data, 'data');
+      final rawData = getPropertyFromJson(res.data, 'data');
+      final List<dynamic> data =
+          rawData is List
+              ? rawData
+              : (rawData is Map ? (rawData['data'] as List? ?? []) : []);
+
       for (var item in data.map((json) => StaffModel.fromJson(json)).toList()) {
         await DatabaseHelper.instance.insertStaff({
           'id': item.id,
@@ -344,7 +354,12 @@ class SyncDataController extends GetxController {
         queryParameters: params,
       );
 
-      final data = getPropertyFromJson(res.data, 'data');
+      final rawData = getPropertyFromJson(res.data, 'data');
+      final List<dynamic> data =
+          rawData is List
+              ? rawData
+              : (rawData is Map ? (rawData['data'] as List? ?? []) : []);
+
       for (var item
           in data.map((json) => ProductModel.fromJson(json)).toList()) {
         await DatabaseHelper.instance.insertProduct({
@@ -380,7 +395,12 @@ class SyncDataController extends GetxController {
         isShowLoading: false,
       );
 
-      final data = getPropertyFromJson(res.data, 'data');
+      final rawData = getPropertyFromJson(res.data, 'data');
+      final List<dynamic> data =
+          rawData is List
+              ? rawData
+              : (rawData is Map ? (rawData['data'] as List? ?? []) : []);
+
       for (var item
           in data.map((json) => PaymentModel.fromJson(json)).toList()) {
         await DatabaseHelper.instance.insertCollected({

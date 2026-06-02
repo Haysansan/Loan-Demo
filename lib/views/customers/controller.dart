@@ -124,7 +124,15 @@ class CustomersController extends GetxController {
       // print(data);
       // final data = getPropertyFromJson(res.data, 'data');
       // final dataWrapper = getPropertyFromJson(res.data, 'data');
-      final data = getPropertyFromJson(res.data, 'data');
+      final dataWrapper = getPropertyFromJson(res.data, 'data');
+
+      // Handle both: flat list OR paginated {data: [...]}
+      final List<dynamic> data =
+          dataWrapper is List
+              ? dataWrapper
+              : (dataWrapper is Map
+                  ? (dataWrapper['data'] as List? ?? [])
+                  : []);
 
       // total = getPropertyFromJson(res.data['totalAmount'], 'total') ?? 0;
       // pagination.checkLoadMore((data['data'] as List).length);
