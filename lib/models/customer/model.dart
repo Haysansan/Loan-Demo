@@ -53,8 +53,11 @@ class ClientModel {
       external_id: json["external_id"]?.toString() ?? 'N/A',
       email: json["email"]?.toString() ?? 'N/A',
       photo: json["photo"]?.toString() ?? '',
-      address: json["address"]?.toString() ?? 'N/A',
-      name: json["name"]?.toString() ?? 'N/A',
+      address:
+          json["villages_name"]?.toString() ??
+          json["address"]?.toString() ??
+          'N/A',
+      name: json["client"]?.toString() ?? json["name"]?.toString() ?? 'N/A',
     );
   }
 }

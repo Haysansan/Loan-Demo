@@ -11,7 +11,8 @@ import 'package:apploan/models/models.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PayfoeachotherController extends GetxController with GetSingleTickerProviderStateMixin {
+class PayfoeachotherController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController totalAmountCtl = TextEditingController();
   final TextEditingController descriptionCtl = TextEditingController();
@@ -32,7 +33,10 @@ class PayfoeachotherController extends GetxController with GetSingleTickerProvid
   void onInit() async {
     await fetchUser();
     totalAmountCtl.addListener(() {
-      String text = totalAmountCtl.text.replaceAll(',', ''); // Remove existing commas
+      String text = totalAmountCtl.text.replaceAll(
+        ',',
+        '',
+      ); // Remove existing commas
       if (text.isNotEmpty) {
         String formattedText = numberFormat.format(int.parse(text));
         totalAmountCtl.value = totalAmountCtl.value.copyWith(
@@ -43,18 +47,22 @@ class PayfoeachotherController extends GetxController with GetSingleTickerProvid
     });
     super.onInit();
   }
+
   void updateClientList(String query) {
     // Implement your filtering logic based on the query
-    var filteredList = ClientList.where((client) {
-      return client.name.toLowerCase().contains(query.toLowerCase());
-    }).toList();
+    var filteredList =
+        ClientList.where((client) {
+          return client.name.toLowerCase().contains(query.toLowerCase());
+        }).toList();
     ClientList.assignAll(filteredList);
   }
+
   // show branch_id for login
   Future<int?> getbranchId() async {
     int? branchId = await SharedPreferencesManager.getIntValue('branch_id');
     return branchId;
   }
+
   // show user_id from login
   Future<int?> getUserId() async {
     int? user_id = await SharedPreferencesManager.getIntValue('user_id');
@@ -66,9 +74,7 @@ class PayfoeachotherController extends GetxController with GetSingleTickerProvid
 
     try {
       isLoadings.value = true;
-      final Map<String, dynamic> params = {
-        'branch_id': branchId,
-      };
+      final Map<String, dynamic> params = {'branch_id': branchId};
 
       final res = await Get.find<ApiService>().get(
         EndPoints.getStaff,
@@ -76,8 +82,9 @@ class PayfoeachotherController extends GetxController with GetSingleTickerProvid
       );
 
       final data = getPropertyFromJson(res.data, 'data');
-      StaffList = List.from((data as List).map((e) => StaffModel.fromJson(e)));
-
+      StaffList = List.from(
+        ((data as List?) ?? []).map((e) => StaffModel.fromJson(e)),
+      );
     } catch (e) {
       if (isClosed) {
         return;
@@ -87,14 +94,19 @@ class PayfoeachotherController extends GetxController with GetSingleTickerProvid
       isLoadings.value = false;
     }
   }
+
   void onClientChanged(ClientPrepaidModel? selectedClient) {
     clientSelected = selectedClient;
   }
+
   // Method to handle staff selection change
   Future<void> onStaffChanged(StaffModel? selectedStaff) async {
     StaffSelected = selectedStaff;
-    await fetchClient(selectedStaff?.id); // Fetch clients based on selected staff
+    await fetchClient(
+      selectedStaff?.id,
+    ); // Fetch clients based on selected staff
   }
+
   Future<void> fetchClient(num? staffId) async {
     int? branchId = await getbranchId();
 
@@ -109,7 +121,9 @@ class PayfoeachotherController extends GetxController with GetSingleTickerProvid
         queryParameters: params,
       );
       final data = getPropertyFromJson(res.data, 'data');
-      ClientList = List.from((data as List).map((e) => ClientPrepaidModel.fromJson(e)));
+      ClientList = List.from(
+        ((data as List?) ?? []).map((e) => ClientPrepaidModel.fromJson(e)),
+      );
     } catch (e) {
       if (isClosed) {
         return;
@@ -119,8 +133,6 @@ class PayfoeachotherController extends GetxController with GetSingleTickerProvid
       isLoading.value = false;
     }
   }
-
-
 
   Future<void> submitBooking() async {
     try {
@@ -137,39 +149,39 @@ class PayfoeachotherController extends GetxController with GetSingleTickerProvid
       });
 
       int? maxId = await DatabaseHelper.instance.getCollectedMaxId();
-      ClientList = ClientList.where((client) => client.id == clientSelected?.id).toList();
+      ClientList =
+          ClientList.where(
+            (client) => client.id == clientSelected?.id,
+          ).toList();
 
-      await DatabaseHelper.instance.insertCollected(
-
-          {
-            'id': maxId,
-            'client': ClientList[0].name + "(បង់ប្រាក់ជំនួស)",
-            'loan_officer': user_id,
-            'created_by_id': user_id,
-            'branch': "",
-            'client_id': 0,
-            'loan_id': clientSelected?.id,
-            'client_code': "",
-            'photo': "",
-            'total_repayment': double.parse(totalAmountCtl.text.replaceAll(",", "")),
-            'amount_penalty' : 0,
-            'currency_id': 2,
-            'description': "Post Repayment",
-            'gateway_id': 1,
-            "status_pay": "មិនទាន់អនុម័ត",
-            'submitted_on': DateFormat('yyyy-MM-dd').format(DateTime.now()),
-            'syncedate': DateFormat('yyyy-MM-dd').format(DateTime.now()),
-            'synced': 1
-          }
-      );
+      await DatabaseHelper.instance.insertCollected({
+        'id': maxId,
+        'client': ClientList[0].name + "(បង់ប្រាក់ជំនួស)",
+        'loan_officer': user_id,
+        'created_by_id': user_id,
+        'branch': "",
+        'client_id': 0,
+        'loan_id': clientSelected?.id,
+        'client_code': "",
+        'photo': "",
+        'total_repayment': double.parse(
+          totalAmountCtl.text.replaceAll(",", ""),
+        ),
+        'amount_penalty': 0,
+        'currency_id': 2,
+        'description': "Post Repayment",
+        'gateway_id': 1,
+        "status_pay": "មិនទាន់អនុម័ត",
+        'submitted_on': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        'syncedate': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        'synced': 1,
+      });
 
       await Get.find<ApiService>().post(
         EndPoints.prePaid,
         formData,
         isShowLoading: true,
       );
-
-
 
       DialogManager.showDialog(
         title: LocaleKeys.successfully.tr,
@@ -183,11 +195,11 @@ class PayfoeachotherController extends GetxController with GetSingleTickerProvid
       ExceptionHandler.handleException(e);
     }
   }
+
   final RxList<File> imageFiles = RxList<File>([File('')]);
 
   final int totalImage = 5;
   bool isNoMoreUpload() {
     return imageFiles.length == totalImage + 1; // 1 is for placeholder image
   }
-
 }

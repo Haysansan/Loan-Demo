@@ -123,20 +123,22 @@ class CustomersController extends GetxController {
       // final data = getPropertyFromJson(DatabaseHelper.instance.queryAllRowsRepayments(1),"data");
       // print(data);
       // final data = getPropertyFromJson(res.data, 'data');
-      final dataWrapper = getPropertyFromJson(res.data, 'data');
-      final data = getPropertyFromJson(dataWrapper, 'data');
+      // final dataWrapper = getPropertyFromJson(res.data, 'data');
+      final data = getPropertyFromJson(res.data, 'data');
 
       // total = getPropertyFromJson(res.data['totalAmount'], 'total') ?? 0;
       // pagination.checkLoadMore((data['data'] as List).length);
 
       if (isRefresh) {
         customerModel.value = List<ClientModel>.from(
-          (data as List).map((e) => ClientModel.fromJson(e)).toList(),
+          ((data as List?) ?? []).map((e) => ClientModel.fromJson(e)).toList(),
         );
       } else {
         customerModel.addAll(
           List<ClientModel>.from(
-            (data as List).map((e) => ClientModel.fromJson(e)).toList(),
+            ((data as List?) ?? [])
+                .map((e) => ClientModel.fromJson(e))
+                .toList(),
           ),
         );
       }
