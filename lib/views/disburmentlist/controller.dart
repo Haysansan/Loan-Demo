@@ -5,7 +5,6 @@ import 'package:apploan/core/core.dart';
 import 'package:apploan/models/models.dart';
 import 'package:apploan/views/views.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DisburmentListController extends GetxController {
   final TextEditingController searchCtl = TextEditingController();

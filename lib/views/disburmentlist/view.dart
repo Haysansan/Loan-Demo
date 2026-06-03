@@ -106,7 +106,7 @@ class DisburmentListView extends GetView<DisburmentListController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('ជ្រើសរើសសាខា', style: AppTextStyle.normalPrimaryRegular),
-                4.height,
+                20.height,
                 DropdownButtonFormField<IdNameModel>(
                   value: controller.selectedBranch.value,
                   hint: Text(
