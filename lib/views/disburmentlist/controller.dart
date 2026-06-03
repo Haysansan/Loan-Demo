@@ -108,44 +108,108 @@ class DisburmentListController extends GetxController {
   // Main fetch – CO path kept exactly as the old implementation
   // ─────────────────────────────────────────────────────────────────────────
 
+  // Future<void> fetchDisburmentList() async {
+  //   try {
+  //     isLoading.value = true;
+
+  //     Map<String, dynamic> param;
+
+  //     if (isBmOrCeo) {
+  //       // BM / CEO: filter by the branch selected in the dropdown
+  //       if (selectedBranch.value == null) return;
+  //       param = {'branch_id': selectedBranch.value!.id};
+  //     } else {
+  //       // CO: original logic – pass user_id exactly as before
+  //       int? user_id = await getUserId();
+  //       param = {'user_id': user_id};
+  //     }
+
+  //     final res = await Get.find<ApiService>().get(
+  //       EndPoints.disbursement,
+  //       queryParameters: param,
+  //       isShowLoading: true,
+  //     );
+
+  //     final data = getPropertyFromJson(res.data, 'data');
+  //     disburment.value = List.from(
+  //       (data as List).map((e) => DisbursementListModel.fromJson(e)).toList(),
+  //     );
+  //     totalClient.text =
+  //         getPropertyFromJson(res.data, 'totalClient')?.toString() ?? '0';
+  //     totalAmount.text = formatCurrency(
+  //       getPropertyFromJson(res.data, 'totalDisbursement')?.toString() ?? '0',
+  //     );
+  //     isDone = true;
+  //     DialogManager.hideLoading();
+  //   } catch (e) {
+  //     if (isClosed) return;
+  //     ExceptionHandler.handleException(e);
+  //   } finally {
+  //     isLoading.value = false; // fix: was setting isBranchLoading in new code
+  //   }
+  // }
   Future<void> fetchDisburmentList() async {
     try {
+      int? user_id = await getUserId();
+      int? branchId = await getbranchId();
       isLoading.value = true;
 
-      Map<String, dynamic> param;
-
-      if (isBmOrCeo) {
-        // BM / CEO: filter by the branch selected in the dropdown
-        if (selectedBranch.value == null) return;
-        param = {'branch_id': selectedBranch.value!.id};
-      } else {
-        // CO: original logic – pass user_id exactly as before
-        int? user_id = await getUserId();
-        param = {'user_id': user_id};
+      // Collect loan IDs that are still in the approval pipeline
+      // (pending / submitted / approved) — these should NOT appear
+      // in the Disbursement List until they are fully disbursed.
+      final Set<String> inPipelineLoanIds = {};
+      try {
+        final approveRes = await Get.find<ApiService>().get(
+          EndPoints.disbursement,
+          queryParameters: {'branch_id': branchId, 'user_id': user_id},
+          isShowLoading: false,
+        );
+        final approveData = getPropertyFromJson(approveRes.data, 'data');
+        if (approveData is List) {
+          for (final item in approveData) {
+            final status = (item['status'] ?? '').toString().toLowerCase();
+            final loanId = item['loan_id']?.toString();
+            // Only exclude loans still in-flight; disbursed/rejected are fine to show
+            if (loanId != null &&
+                (status == 'pending' ||
+                    status == 'submitted' ||
+                    status == 'approved')) {
+              inPipelineLoanIds.add(loanId);
+            }
+          }
+        }
+      } catch (_) {
+        // Non-fatal — continue without filtering if this call fails
       }
 
+      final Map<String, dynamic> param = {'user_id': user_id};
       final res = await Get.find<ApiService>().get(
         EndPoints.disbursement,
         queryParameters: param,
         isShowLoading: true,
       );
-
       final data = getPropertyFromJson(res.data, 'data');
-      disburment.value = List.from(
-        (data as List).map((e) => DisbursementListModel.fromJson(e)).toList(),
+
+      final allItems = List<DisbursementListModel>.from(
+        (data as List).map((e) => DisbursementListModel.fromJson(e)),
       );
-      totalClient.text =
-          getPropertyFromJson(res.data, 'totalClient')?.toString() ?? '0';
+
+      // Remove loans still waiting for approval / disbursement action
+      disburment.value =
+          allItems
+              .where((item) => !inPipelineLoanIds.contains(item.loan_id))
+              .toList();
+
+      totalClient.text = getPropertyFromJson(res.data, 'totalClient');
       totalAmount.text = formatCurrency(
-        getPropertyFromJson(res.data, 'totalDisbursement')?.toString() ?? '0',
+        getPropertyFromJson(res.data, 'totalDisbursement'),
       );
       isDone = true;
       DialogManager.hideLoading();
     } catch (e) {
-      if (isClosed) return;
       ExceptionHandler.handleException(e);
     } finally {
-      isLoading.value = false; // fix: was setting isBranchLoading in new code
+      isLoading.value = false;
     }
   }
 }

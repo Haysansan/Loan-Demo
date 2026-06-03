@@ -503,7 +503,6 @@
 //     }
 //   }
 // }
-// lib/views/approve_loans/controller.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:apploan/core/core.dart';
@@ -511,33 +510,30 @@ import 'package:apploan/models/models.dart';
 import 'package:apploan/views/views.dart';
 
 class ApproveLoansController extends GetxController {
-  // ─── Role ───────────────────────────────────────────────────────────────────
+  // ─── Role ───
   final Rx<UserType?> userRole = Rx<UserType?>(null);
 
   bool get isBM => userRole.value == UserType.bm;
   bool get isCEO => userRole.value == UserType.eco;
 
-  // ─── Tab index ──────────────────────────────────────────────────────────────
-  // BM:  0 = View All | 1 = Verify (pending)  | 2 = Disburse (approved by CEO)
-  // CEO: 0 = View All | 1 = Approve (submitted by BM)
   final RxInt selectedTab = 1.obs;
   final RxBool isLoading = false.obs;
 
-  // ─── Lists per stage ────────────────────────────────────────────────────────
+  // ─── Lists per stage ───
   final RxList<LoanApprovalModel> allLoans = <LoanApprovalModel>[].obs;
   final RxList<LoanApprovalModel> verifyLoans = <LoanApprovalModel>[].obs;
   final RxList<LoanApprovalModel> disbursementLoans = <LoanApprovalModel>[].obs;
   final RxList<LoanApprovalModel> acceptLoans = <LoanApprovalModel>[].obs;
 
-  // ─── Search ─────────────────────────────────────────────────────────────────
+  // ─── Search ───
   final TextEditingController searchCtl = TextEditingController();
 
-  // ─── Per-card comment fields ─────────────────────────────────────────────────
+  // ─── Per-card comment fields ────
   final Map<int, TextEditingController> _commentControllers = {};
   TextEditingController getCommentController(int loanId) =>
       _commentControllers.putIfAbsent(loanId, () => TextEditingController());
 
-  // ─── Derived ─────────────────────────────────────────────────────────────────
+  // ─── Derived ────
   List<LoanApprovalModel> get currentList {
     if (isCEO) return selectedTab.value == 0 ? allLoans : acceptLoans;
     switch (selectedTab.value) {
@@ -571,7 +567,7 @@ class ApproveLoansController extends GetxController {
   int get disbursementCount => disbursementLoans.length;
   int get acceptCount => acceptLoans.length;
 
-  // ─── Helpers ─────────────────────────────────────────────────────────────────
+  // ─── Helpers ──────
   Future<int?> _getBranchId() =>
       SharedPreferencesManager.getIntValue('branch_id');
   Future<int?> _getUserId() => SharedPreferencesManager.getIntValue('user_id');
@@ -588,10 +584,11 @@ class ApproveLoansController extends GetxController {
     }
   }
 
-  // ─── Init ────────────────────────────────────────────────────────────────────
+  // ─── Init ─────────
   @override
   void onInit() {
     super.onInit();
+    _loadAllLists();
     _initRole();
   }
 
@@ -615,7 +612,7 @@ class ApproveLoansController extends GetxController {
     }
   }
 
-  // ─── Public refresh ──────────────────────────────────────────────────────────
+  // ─── Public refresh ────────
   Future<void> fetchLoans() async {
     try {
       isLoading.value = true;
@@ -628,7 +625,7 @@ class ApproveLoansController extends GetxController {
     }
   }
 
-  // ─── Central fetch — one API call, split by status ───────────────────────────
+  // ─── Central fetch — one API call, split by status ──────
   Future<void> _loadAllLists() async {
     final branchId = await _getBranchId();
     final userId = await _getUserId();
@@ -647,7 +644,7 @@ class ApproveLoansController extends GetxController {
             .map((e) => LoanApprovalModel.fromJson(e as Map<String, dynamic>))
             .toList();
 
-    // ── Status legend ─────────────────────────────────────────────────────────
+    // ── Status legend ───────
     // "pending"   → CO submitted, awaiting BM verification   → BM: Verify tab
     // "submitted" → BM verified, awaiting CEO approval        → CEO: Approve tab
     // "approved"  → CEO approved, awaiting BM disbursement    → BM: Disburse tab
@@ -684,7 +681,7 @@ class ApproveLoansController extends GetxController {
     }
   }
 
-  // ─── Search ──────────────────────────────────────────────────────────────────
+  // ─── Search ───────
   void search() {
     final q = searchCtl.text.trim().toLowerCase();
     if (q.isEmpty) {
@@ -717,7 +714,7 @@ class ApproveLoansController extends GetxController {
     fetchLoans();
   }
 
-  // ─── BM: Verify → "submitted" (sends to CEO) ─────────────────────────────────
+  // ─── BM: Verify → "submitted" (sends to CEO) ────────────
   Future<void> verifyLoan(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Verification',
@@ -734,7 +731,7 @@ class ApproveLoansController extends GetxController {
     );
   }
 
-  // ─── BM: Reject from Verify tab ──────────────────────────────────────────────
+  // ─── BM: Reject from Verify tab ─────────────
   Future<void> rejectVerifyLoan(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Rejection',
@@ -750,7 +747,7 @@ class ApproveLoansController extends GetxController {
     );
   }
 
-  // ─── CEO: Approve → "approved" (sends back to BM Disburse tab) ───────────────
+  // ─── CEO: Approve → "approved" (sends back to BM Disburse tab) ──────
   Future<void> approveLoan(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Approval',
@@ -766,7 +763,7 @@ class ApproveLoansController extends GetxController {
     );
   }
 
-  // ─── CEO: Reject ──────────────────────────────────────────────────────────────
+  // ─── CEO: Reject ───
   Future<void> rejectLoan(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Rejection',
@@ -782,7 +779,7 @@ class ApproveLoansController extends GetxController {
     );
   }
 
-  // ─── BM: Disburse → "disbursed" ───────────────────────────────────────────────
+  // ─── BM: Disburse → "disbursed" ──────────────
   Future<void> disburseLoan(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Disbursement',
@@ -798,7 +795,7 @@ class ApproveLoansController extends GetxController {
     );
   }
 
-  // ─── BM: Reject from Disburse tab ─────────────────────────────────────────────
+  // ─── BM: Reject from Disburse tab ────────────
   Future<void> rejectDisbursement(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Rejection',
@@ -814,7 +811,7 @@ class ApproveLoansController extends GetxController {
     );
   }
 
-  // ─── Shared helpers ───────────────────────────────────────────────────────────
+  // ─── Shared helpers ─────────
   void _confirm({
     required String title,
     required String body,

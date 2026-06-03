@@ -72,7 +72,8 @@ class DisbursementListModel {
   final String photo;
   final String principal;
   final String villages_name;
-  final String status;
+  final String loan_status;
+  final String interestRate;
 
   DisbursementListModel({
     required this.client,
@@ -87,7 +88,8 @@ class DisbursementListModel {
     required this.photo,
     required this.principal,
     required this.villages_name,
-    required this.status,
+    required this.loan_status,
+    required this.interestRate,
   });
   factory DisbursementListModel.fromJson(Map<String, dynamic> json) {
     return DisbursementListModel(
@@ -103,7 +105,8 @@ class DisbursementListModel {
       photo: json["photo"] ?? 'N/A',
       principal: json["principal"] ?? 'N/A',
       villages_name: json["villages_name"] ?? 'N/A',
-      status: json["status"] ?? 'N/A',
+      loan_status: json["loan_status"] ?? 'N/A',
+      interestRate: json["interest_rate"] ?? 'N/A',
     );
   }
 }

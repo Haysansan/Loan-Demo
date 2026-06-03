@@ -51,23 +51,34 @@ class DashboardController extends GetxController {
     super.onClose();
   }
 
+  // Future<void> fetchPendingApprovalCount() async {
+  //   try {
+  //     final res = await Get.find<ApiService>().get(
+  //       EndPoints.getApproveDisburse,
+  //       isShowLoading: false,
+  //     );
+  //     final data = getPropertyFromJson(res.data, 'data');
+  //     if (data is List) {
+  //       pendingApprovalCount.value = data.length;
+  //     } else {
+  //       final count = getPropertyFromJson(res.data, 'total');
+  //       pendingApprovalCount.value =
+  //           int.tryParse(count?.toString() ?? '0') ?? 0;
+  //     }
+  //   } catch (_) {
+  //     // silently fail — badge stays 0
+  //   }
+  // }
   Future<void> fetchPendingApprovalCount() async {
     try {
-      final res = await Get.find<ApiService>().get(
-        EndPoints.getPendingApproval,
-        isShowLoading: false,
-      );
-      final data = getPropertyFromJson(res.data, 'data');
-      if (data is List) {
-        pendingApprovalCount.value = data.length;
-      } else {
-        // if API returns a direct count field instead:
-        final count = getPropertyFromJson(res.data, 'total');
-        pendingApprovalCount.value =
-            int.tryParse(count?.toString() ?? '0') ?? 0;
+      final approveCtl = Get.find<ApproveLoansController>();
+      if (approveCtl.isBM) {
+        pendingApprovalCount.value = approveCtl.verifyCount;
+      } else if (approveCtl.isCEO) {
+        pendingApprovalCount.value = approveCtl.acceptCount;
       }
     } catch (_) {
-      // silently fail — badge won't appear
+      // controller not loaded yet, badge stays at current value
     }
   }
 

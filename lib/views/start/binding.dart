@@ -12,5 +12,6 @@ class StartBinding extends Bindings {
     Get.lazyPut<DisburmentListController>(() => DisburmentListController());
     Get.lazyPut<PaidOffController>(() => PaidOffController());
     Get.lazyPut<ReasonController>(() => ReasonController());
+    Get.put<ApproveLoansController>(ApproveLoansController());
   }
 }

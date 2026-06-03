@@ -163,6 +163,11 @@ class DashboardWidget extends StatelessWidget {
       Get.find<DashboardController>().fetchPendingApprovalCount();
     });
   }
+  // void Approval() {
+  //   Get.back(); // close drawer or whatever
+  //   Get.toNamed(Routes.approveLoans);
+  //   // ← remove the .then() entirely, no callback needed
+  // }
 
   @override
   Widget build(BuildContext context) {
