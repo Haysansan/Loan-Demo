@@ -129,15 +129,20 @@ class ApiService extends GetxService {
         );
         return response; // ✅ ADDED: return on success
       } on DioException catch (e) {
-        attempt++; // ✅ ADDED: increase attempt count
+        attempt++;
 
-        if (attempt > retries) {
-          rethrow; // ✅ ADDED: rethrow after max retries
+        // Don't retry on client errors (4xx) — these are validation errors, not network issues
+        if (e.response?.statusCode != null &&
+            e.response!.statusCode! >= 400 &&
+            e.response!.statusCode! < 500) {
+          rethrow;
         }
 
-        await Future.delayed(
-          const Duration(seconds: 2),
-        ); // ✅ ADDED: delay before retry
+        if (attempt > retries) {
+          rethrow;
+        }
+
+        await Future.delayed(const Duration(seconds: 2));
       }
     }
 

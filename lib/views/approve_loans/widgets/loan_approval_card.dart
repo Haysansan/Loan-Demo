@@ -38,11 +38,9 @@ class LoanApprovalCard extends StatelessWidget {
     if (controller.isCEO) {
       controller.approveLoan(loan);
     } else if (controller.selectedTab.value == 1) {
-      // BM – Verify tab
-      controller.verifyLoan(loan);
+      controller.verifyLoan(loan); // BM Verify tab
     } else {
-      // BM – Disbursement tab
-      controller.disburseLoan(loan);
+      controller.disburseLoan(loan); // BM Disburse tab
     }
   }
 
@@ -50,11 +48,9 @@ class LoanApprovalCard extends StatelessWidget {
     if (controller.isCEO) {
       controller.rejectLoan(loan);
     } else if (controller.selectedTab.value == 1) {
-      // BM – Verify tab
-      controller.rejectVerifyLoan(loan);
+      controller.rejectVerifyLoan(loan); // BM Verify tab
     } else {
-      // BM – Disbursement tab
-      controller.rejectDisbursement(loan);
+      controller.rejectDisbursement(loan); // BM Disburse tab
     }
   }
 
@@ -203,7 +199,7 @@ class LoanApprovalCard extends StatelessWidget {
           // ── Product name ───
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Text(loan.productName, style: AppTextStyle.smallGreyRegular),
+            child: Text(loan.loanTerm, style: AppTextStyle.smallGreyRegular),
           ),
 
           // ── Comment + action buttons (hidden on View All tab) ──

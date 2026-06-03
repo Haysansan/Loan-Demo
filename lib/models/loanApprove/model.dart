@@ -8,7 +8,7 @@ class LoanApprovalModel {
   final String interestRate;
   final String createAt;
   final String cycle;
-  final String productName;
+  final String loanTerm;
   final String status;
   final String photo;
   final String loanId;
@@ -26,7 +26,7 @@ class LoanApprovalModel {
     required this.interestRate,
     required this.createAt,
     required this.cycle,
-    required this.productName,
+    required this.loanTerm,
     required this.status,
     required this.photo,
     required this.loanId,
@@ -51,11 +51,12 @@ class LoanApprovalModel {
           '0',
       interestRate: json['interest_rate'] ?? 'N/A',
       // start date = when loan was created
-      createAt: json['created_at']?.toString().split(' ')[0] ?? 'N/A',
+      createAt: json['disbursement_date']?.toString().split(' ')[0] ?? 'N/A',
       // end date = cycle number
       cycle: 'វដ្តទី ${json['cycle'] ?? 'N/A'}',
       // product name from API
-      productName: json['product_name'] ?? json['loan_type'] ?? 'N/A',
+      // productName: json['product_name'] ?? json['loan_term'] ?? 'N/A',
+      loanTerm: json["loan_term"] ?? 'N/A',
       // submittedAt shows village name
       village: json['villages_name'] ?? json['village_name'] ?? 'N/A',
       status: json['status'] ?? 'pending',

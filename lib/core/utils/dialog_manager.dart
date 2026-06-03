@@ -6,10 +6,8 @@ class DialogManager {
   DialogManager._();
 
   static Future<dynamic> showCustom(Widget content) {
-    while (Get.isOverlaysOpen) {
-      Get.back(closeOverlays: false);
-    }
-
+    if (Get.isDialogOpen == true) Get.back();
+    if (Get.isBottomSheetOpen == true) Get.back();
     return Get.dialog(
       content,
       transitionDuration: const Duration(milliseconds: 150),
@@ -22,29 +20,25 @@ class DialogManager {
     Function()? onPressed,
     String? btnText,
   }) async {
-    while (Get.isOverlaysOpen) {
-      Get.back(closeOverlays: false);
-    }
-
+    if (Get.isDialogOpen == true) Get.back();
+    if (Get.isBottomSheetOpen == true) Get.back();
     return Get.dialog(
       PrimaryDialog(
         title: title,
         subTitle: subTitle,
+        btnText: btnText ?? LocaleKeys.ok.tr,
         onPressed: () {
           Get.back();
           onPressed?.call();
         },
       ),
-      // barrierDismissible: false,
       transitionDuration: const Duration(milliseconds: 150),
     );
   }
 
   static Future<dynamic> showConnectionDialog() async {
-    while (Get.isOverlaysOpen) {
-      Get.back(closeOverlays: true);
-    }
-
+    if (Get.isDialogOpen == true) Get.back();
+    if (Get.isBottomSheetOpen == true) Get.back();
     return Get.dialog(
       barrierDismissible: false,
       PrimaryDialog(
@@ -58,15 +52,10 @@ class DialogManager {
   }
 
   static Future<dynamic> showLoadingDialog() {
-    while (Get.isOverlaysOpen) {
-      Get.back(closeOverlays: true);
-    }
-
-    return Get.dialog(
-      barrierDismissible: false,
-      const LoadingDialog(),
-    );
+    return Get.dialog(barrierDismissible: false, const LoadingDialog());
   }
 
-  static void hideLoading() => Get.back();
+  static void hideLoading() {
+    if (Get.isDialogOpen == true) Get.back();
+  }
 }
