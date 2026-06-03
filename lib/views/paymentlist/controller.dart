@@ -14,16 +14,26 @@ class PaymentListController extends GetxController {
   final TextEditingController searchCtl = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final RxList<PaymentModel> repayment = <PaymentModel>[].obs;
+  final RxList<RepaymentModel> bmRepaymentList = <RepaymentModel>[].obs;
   final RxBool isLoading = false.obs;
+  final RxBool isRepaymentLoading = false.obs;
   final TextEditingController totalClient = TextEditingController();
   final TextEditingController totalAmount = TextEditingController();
+  final RxString selectedTab = 'paylist'.obs;
 
+  // fetch once, cache in memory
+  bool _paylistFetched = false;
+  bool _repaymentFetched = false;
   bool isDone = false;
   final StartController startCtl = Get.find<StartController>();
 
   @override
   void onInit() {
-    fetchpaymentList();
+    if (UserRepository.shared.isCO) {
+      fetchpaymentList();
+    } else {
+      fetchpaymentListFromApi();
+    }
     super.onInit();
   }
 
@@ -169,6 +179,65 @@ class PaymentListController extends GetxController {
           Get.back();
         },
       );
+    }
+  }
+
+  void switchTab(String tab) {
+    selectedTab.value = tab;
+    if (tab == 'paylist' && !_paylistFetched) {
+      fetchpaymentListFromApi();
+    } else if (tab == 'repayment' && !_repaymentFetched) {
+      fetchBmRepaymentList();
+    }
+  }
+
+  Future<void> fetchpaymentListFromApi() async {
+    try {
+      isLoading.value = true;
+      final int? branchId = await getbranchId();
+      final int? userId = await getUserId();
+      final res = await Get.find<ApiService>().get(
+        EndPoints.payment,
+        queryParameters: {'branch_id': branchId, 'user_id': userId},
+        isShowLoading: false,
+      );
+      final data = getPropertyFromJson(res.data, 'data');
+      repayment.value = List.from(
+        (data as List).map((e) => PaymentModel.fromJson(e)),
+      );
+      totalClient.text =
+          (getPropertyFromJson(res.data, 'totalClient') ?? '0').toString();
+      totalAmount.text = formatCurrency(
+        (getPropertyFromJson(res.data, 'totalAmount') ?? '0').toString(),
+      );
+      isDone = true;
+      _paylistFetched = true;
+    } catch (e) {
+      ExceptionHandler.handleException(e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchBmRepaymentList() async {
+    try {
+      isRepaymentLoading.value = true;
+      final int? branchId = await getbranchId();
+      final int? userId = await getUserId();
+      final res = await Get.find<ApiService>().get(
+        EndPoints.repayment,
+        queryParameters: {'branch_id': branchId, 'user_id': userId},
+        isShowLoading: false,
+      );
+      final data = getPropertyFromJson(res.data, 'data');
+      bmRepaymentList.value = List.from(
+        (data as List).map((e) => RepaymentModel.fromJson(e)),
+      );
+      _repaymentFetched = true;
+    } catch (e) {
+      ExceptionHandler.handleException(e);
+    } finally {
+      isRepaymentLoading.value = false;
     }
   }
 }
