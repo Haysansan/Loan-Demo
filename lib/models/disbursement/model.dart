@@ -1,4 +1,4 @@
-class DisbursementModel{
+class DisbursementModel {
   String? client;
   String? loan_officer;
   String? branch;
@@ -25,9 +25,8 @@ class DisbursementModel{
     this.photo,
     this.principal,
     this.villages_name,
-
   });
-  DisbursementModel.fromJson(Map<String,dynamic> json){
+  DisbursementModel.fromJson(Map<String, dynamic> json) {
     client = json["client"];
     loan_officer = json["loan_officer"];
     branch = json["branch"];
@@ -41,8 +40,8 @@ class DisbursementModel{
     principal = json["principal"];
     villages_name = json["villages_name"];
   }
-  Map<String,dynamic> toJson(){
-    final Map<String,dynamic> data = new Map<String,dynamic>();
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['client'] = this.client;
     data['loan_officer'] = this.loan_officer;
     data['branch'] = this.branch;
@@ -60,7 +59,7 @@ class DisbursementModel{
   }
 }
 
-class DisbursementListModel{
+class DisbursementListModel {
   final String client;
   final String loan_officer;
   final String branch;
@@ -73,6 +72,7 @@ class DisbursementListModel{
   final String photo;
   final String principal;
   final String villages_name;
+  final String status;
 
   DisbursementListModel({
     required this.client,
@@ -87,21 +87,23 @@ class DisbursementListModel{
     required this.photo,
     required this.principal,
     required this.villages_name,
-
+    required this.status,
   });
   factory DisbursementListModel.fromJson(Map<String, dynamic> json) {
     return DisbursementListModel(
-    client : json["client"] ?? 'N/A',
-    loan_officer : json["loan_officer"] ?? 'N/A',
-    branch : json["branch"] ?? 'N/A',
-    client_id : json["client_id"] ?? 'N/A',
-    loan_id : json["loan_id"] ?? 'N/A',
-    client_code : json["client_code"] ?? 'N/A',
-    account_number : json["account_number"] ?? 'N/A',
-    cycle : json["cycle"] ?? 'N/A',
-    loan_term : json["loan_term"] ?? 'N/A',
-    photo : json["photo"] ?? 'N/A',
-    principal : json["principal"] ?? 'N/A',
-    villages_name : json["villages_name"] ?? 'N/A',);
+      client: json["client"] ?? 'N/A',
+      loan_officer: json["loan_officer"] ?? 'N/A',
+      branch: json["branch"] ?? 'N/A',
+      client_id: json["client_id"] ?? 'N/A',
+      loan_id: json["loan_id"] ?? 'N/A',
+      client_code: json["client_code"] ?? 'N/A',
+      account_number: json["account_number"] ?? 'N/A',
+      cycle: json["cycle"] ?? 'N/A',
+      loan_term: json["loan_term"] ?? 'N/A',
+      photo: json["photo"] ?? 'N/A',
+      principal: json["principal"] ?? 'N/A',
+      villages_name: json["villages_name"] ?? 'N/A',
+      status: json["status"] ?? 'N/A',
+    );
   }
 }
