@@ -15,10 +15,10 @@ class DisburmentListController extends GetxController {
   final TextEditingController totalClient = TextEditingController();
   final TextEditingController totalAmount = TextEditingController();
 
-  // ── BM / CEO only ──
-  final RxBool isBranchLoading = false.obs;
-  final RxList<IdNameModel> branchList = <IdNameModel>[].obs;
-  final Rxn<IdNameModel> selectedBranch = Rxn<IdNameModel>();
+  // ── BM / CEO only – commented out (branch selection no longer used) ──
+  // final RxBool isBranchLoading = false.obs;
+  // final RxList<IdNameModel> branchList = <IdNameModel>[].obs;
+  // final Rxn<IdNameModel> selectedBranch = Rxn<IdNameModel>();
 
   bool isDone = false;
   final StartController startCtl = Get.find<StartController>();
@@ -33,11 +33,7 @@ class DisburmentListController extends GetxController {
 
   @override
   void onInit() {
-    if (isBmOrCeo) {
-      fetchBranches(); // load branch dropdown; list fetch is triggered on selection
-    } else {
-      fetchDisburmentList(); // CO: fetch immediately as before
-    }
+    fetchDisburmentList(); // same entry point for all roles
     super.onInit();
   }
 
@@ -61,93 +57,53 @@ class DisburmentListController extends GetxController {
         : 'N/A';
   }
 
-  // show branch_id stored at login (CO)
+  // show branch_id stored at login
   Future<int?> getbranchId() async {
     int? branchId = await SharedPreferencesManager.getIntValue('branch_id');
     return branchId;
   }
 
-  // show user_id stored at login (CO)
+  // show user_id stored at login
   Future<int?> getUserId() async {
     int? user_id = await SharedPreferencesManager.getIntValue('user_id');
     return user_id;
   }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // BM / CEO – branch dropdown
+  // BM / CEO – branch dropdown (commented out – no longer used)
   // ─────────────────────────────────────────────────────────────────────────
 
-  Future<void> fetchBranches() async {
-    try {
-      isBranchLoading.value = true;
-      final res = await Get.find<ApiService>().get(
-        EndPoints
-            .getBranches, // add `static String get getBranches => 'get_branches';` to EndPoints
-        isShowLoading: false,
-      );
-      final data = getPropertyFromJson(res.data, 'data');
-      branchList.value = List<IdNameModel>.from(
-        (data as List).map(
-          (e) => IdNameModel(id: e['id'] ?? 0, name: e['name'] ?? 'N/A'),
-        ),
-      );
-    } catch (e) {
-      if (isClosed) return;
-      ExceptionHandler.handleException(e);
-    } finally {
-      isBranchLoading.value = false;
-    }
-  }
-
-  void onBranchChanged(IdNameModel? branch) {
-    selectedBranch.value = branch;
-    if (branch != null) fetchDisburmentList();
-  }
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // Main fetch – CO path kept exactly as the old implementation
-  // ─────────────────────────────────────────────────────────────────────────
-
-  // Future<void> fetchDisburmentList() async {
+  // Future<void> fetchBranches() async {
   //   try {
-  //     isLoading.value = true;
-
-  //     Map<String, dynamic> param;
-
-  //     if (isBmOrCeo) {
-  //       // BM / CEO: filter by the branch selected in the dropdown
-  //       if (selectedBranch.value == null) return;
-  //       param = {'branch_id': selectedBranch.value!.id};
-  //     } else {
-  //       // CO: original logic – pass user_id exactly as before
-  //       int? user_id = await getUserId();
-  //       param = {'user_id': user_id};
-  //     }
-
+  //     isBranchLoading.value = true;
   //     final res = await Get.find<ApiService>().get(
-  //       EndPoints.disbursement,
-  //       queryParameters: param,
-  //       isShowLoading: true,
+  //       EndPoints.getBranches,
+  //       isShowLoading: false,
   //     );
-
   //     final data = getPropertyFromJson(res.data, 'data');
-  //     disburment.value = List.from(
-  //       (data as List).map((e) => DisbursementListModel.fromJson(e)).toList(),
+  //     branchList.value = List<IdNameModel>.from(
+  //       (data as List).map(
+  //         (e) => IdNameModel(id: e['id'] ?? 0, name: e['name'] ?? 'N/A'),
+  //       ),
   //     );
-  //     totalClient.text =
-  //         getPropertyFromJson(res.data, 'totalClient')?.toString() ?? '0';
-  //     totalAmount.text = formatCurrency(
-  //       getPropertyFromJson(res.data, 'totalDisbursement')?.toString() ?? '0',
-  //     );
-  //     isDone = true;
-  //     DialogManager.hideLoading();
   //   } catch (e) {
   //     if (isClosed) return;
   //     ExceptionHandler.handleException(e);
   //   } finally {
-  //     isLoading.value = false; // fix: was setting isBranchLoading in new code
+  //     isBranchLoading.value = false;
   //   }
   // }
+
+  // void onBranchChanged(IdNameModel? branch) {
+  //   selectedBranch.value = branch;
+  //   if (branch != null) fetchDisburmentList();
+  // }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Main fetch – unified for all roles (CO path kept exactly as before;
+  // BM/CEO now also passes branch_id + permission so the API filters correctly)
+  // ─────────────────────────────────────────────────────────────────────────
+
   Future<void> fetchDisburmentList() async {
     try {
       int? user_id = await getUserId();
@@ -182,7 +138,17 @@ class DisburmentListController extends GetxController {
         // Non-fatal — continue without filtering if this call fails
       }
 
-      final Map<String, dynamic> param = {'user_id': user_id};
+      // Build query params based on role.
+      // CO:      branch_id + user_id  (original behaviour, unchanged)
+      // BM/CEO:  branch_id + user_id + permission=co
+      //          The API already scopes results by branch when permission=co
+      //          is supplied together with the stored branch_id / user_id.
+      final Map<String, dynamic> param = {
+        'branch_id': branchId,
+        'user_id': user_id,
+        if (isBmOrCeo) 'permission': 'co',
+      };
+
       final res = await Get.find<ApiService>().get(
         EndPoints.disbursement,
         queryParameters: param,
@@ -200,13 +166,15 @@ class DisburmentListController extends GetxController {
               .where((item) => !inPipelineLoanIds.contains(item.loan_id))
               .toList();
 
-      totalClient.text = getPropertyFromJson(res.data, 'totalClient');
+      totalClient.text =
+          getPropertyFromJson(res.data, 'totalClient')?.toString() ?? '0';
       totalAmount.text = formatCurrency(
-        getPropertyFromJson(res.data, 'totalDisbursement'),
+        getPropertyFromJson(res.data, 'totalDisbursement')?.toString() ?? '0',
       );
       isDone = true;
       DialogManager.hideLoading();
     } catch (e) {
+      if (isClosed) return;
       ExceptionHandler.handleException(e);
     } finally {
       isLoading.value = false;
