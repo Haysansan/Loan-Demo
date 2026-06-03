@@ -17,12 +17,18 @@ class DashboardController extends GetxController {
 
   final RxList<BookingModel> bookings = <BookingModel>[].obs;
 
+  // For pending approval count
+  final RxInt pendingApprovalCount = 0.obs;
+
   DatePicker getDatePicker() {
     final DatePicker startPicker = DatePicker(
       controller: dateCtl,
-      initialDate: dateCtl.text.isEmpty
-          ? DateTime.parse('${DateFormat("yyyy-MM-dd").format(DateTime.now())} 00:00:00')
-          : DateTime.parse(dateCtl.text),
+      initialDate:
+          dateCtl.text.isEmpty
+              ? DateTime.parse(
+                '${DateFormat("yyyy-MM-dd").format(DateTime.now())} 00:00:00',
+              )
+              : DateTime.parse(dateCtl.text),
       minDate: DateTime(DateTime.now().year - 200),
       maxDate: DateTime(DateTime.now().year + 200),
       minYear: DateTime.now().year - 200,
@@ -34,12 +40,35 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    if (UserRepository.shared.isBM || UserRepository.shared.isEco) {
+      fetchPendingApprovalCount();
+    }
   }
 
   @override
   void onClose() {
     dateCtl.dispose();
     super.onClose();
+  }
+
+  Future<void> fetchPendingApprovalCount() async {
+    try {
+      final res = await Get.find<ApiService>().get(
+        EndPoints.getPendingApproval,
+        isShowLoading: false,
+      );
+      final data = getPropertyFromJson(res.data, 'data');
+      if (data is List) {
+        pendingApprovalCount.value = data.length;
+      } else {
+        // if API returns a direct count field instead:
+        final count = getPropertyFromJson(res.data, 'total');
+        pendingApprovalCount.value =
+            int.tryParse(count?.toString() ?? '0') ?? 0;
+      }
+    } catch (_) {
+      // silently fail — badge won't appear
+    }
   }
 
   void gridHandleTap(DeliveryStatus status) {

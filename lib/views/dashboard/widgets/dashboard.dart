@@ -158,7 +158,10 @@ class DashboardWidget extends StatelessWidget {
 
   void Approval() {
     Get.back();
-    Get.toNamed(Routes.approveLoans);
+    Get.toNamed(Routes.approveLoans)?.then((_) {
+      // Refresh badge count when user comes back
+      Get.find<DashboardController>().fetchPendingApprovalCount();
+    });
   }
 
   @override
@@ -244,17 +247,57 @@ class DashboardWidget extends StatelessWidget {
                             child: Ink(
                               child: Column(
                                 children: [
-                                  Container(
-                                    height: 60,
-                                    width: 60,
-                                    decoration: BoxDecoration(
-                                      color:
-                                          isComingSoon
-                                              ? const Color(0xFFA88787)
-                                              : catColors[index],
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Center(child: catIcons[index]),
+                                  Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Container(
+                                        height: 60,
+                                        width: 60,
+                                        decoration: BoxDecoration(
+                                          color:
+                                              isComingSoon
+                                                  ? const Color(0xFFA88787)
+                                                  : catColors[index],
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(child: catIcons[index]),
+                                      ),
+                                      if (catNames[index] ==
+                                          LocaleKeys.approveLoans.tr)
+                                        Obx(() {
+                                          final count =
+                                              Get.find<DashboardController>()
+                                                  .pendingApprovalCount
+                                                  .value;
+                                          if (count <= 0)
+                                            return const SizedBox.shrink();
+                                          return Positioned(
+                                            top: -4,
+                                            right: -4,
+                                            child: Container(
+                                              padding: const EdgeInsets.all(4),
+                                              constraints: const BoxConstraints(
+                                                minWidth: 20,
+                                                minHeight: 20,
+                                              ),
+                                              decoration: const BoxDecoration(
+                                                color: Colors.green,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Text(
+                                                '$count',
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.bold,
+                                                  height: 1,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                    ],
                                   ),
                                   SizedBox(height: 5),
                                   Text(
