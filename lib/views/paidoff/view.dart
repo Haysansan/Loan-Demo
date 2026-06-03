@@ -22,7 +22,10 @@ class PaidOffView extends GetView<PaidOffController> {
     return Scaffold(
       appBar: CustomAppBar(
         title: LocaleKeys.paidoff.tr,
-        onBack: () => Navigator.pop(context, false),
+        onBack: () {
+          final startCtl = Get.find<StartController>();
+          startCtl.changeMenu(startCtl.previousIndex.value);
+        },
       ),
       body: Obx(() {
         if (controller.isLoading.value) {

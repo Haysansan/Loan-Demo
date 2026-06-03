@@ -18,7 +18,10 @@ class DisburmentListView extends GetView<DisburmentListController> {
     return Scaffold(
       appBar: CustomAppBar(
         title: LocaleKeys.loanDisbursmentsList.tr,
-        onBack: () => Navigator.pop(context, false),
+        onBack: () {
+          final startCtl = Get.find<StartController>();
+          startCtl.changeMenu(startCtl.previousIndex.value);
+        },
       ),
       body: controller.isBmOrCeo ? _buildBmCeoBody() : _buildCoBody(),
     );

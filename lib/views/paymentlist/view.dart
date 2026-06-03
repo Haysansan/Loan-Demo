@@ -20,7 +20,10 @@ class PaymentCollectionView extends GetView<PaymentListController> {
     return Scaffold(
       appBar: CustomAppBar(
         title: LocaleKeys.paymentslist.tr,
-        onBack: () => Navigator.pop(context, false),
+        onBack: () {
+          final startCtl = Get.find<StartController>();
+          startCtl.changeMenu(startCtl.previousIndex.value);
+        },
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
