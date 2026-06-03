@@ -223,5 +223,9 @@
   "totalOS": "Total OS",
   "totalClient": "And Total Client",
   "deno": "DENO",
-  "approveLoans": "Approve Loans"
+  "approveLoans": "Approve Loans",
+  "acceptLoan": "Accept Loan",
+  "viewAllLoans": "View All Loans",
+  "verifyLoan": "Verify Loans",
+  "disburseLoan": "Disburse Loans"
 }

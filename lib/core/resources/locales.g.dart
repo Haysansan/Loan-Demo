@@ -297,6 +297,10 @@ class LocaleKeys {
   static const commingSoon = 'comingSoon';
 
   static const futureUpdate = 'futureUpdate';
+  static const viewAllLoans = 'viewAllLoans';
+  static const verifyLoan = 'verifyLoan';
+  static const disburseLoan = 'disburseLoan';
+  static const approveLoan = 'approveLoan';
 }
 
 class Locales {
@@ -583,6 +587,10 @@ class Locales {
 
     'comingSoon': 'Coming Soon!',
     'futureUpdate': 'This feature will be available in a future update.',
+    'viewAllLoans': 'View All Loans',
+    'verifyLoan': 'Verify Loans',
+    'disburseLoan': 'Disburse Loans',
+    'approveLoan': 'Approve Loans',
   };
   static const KM_KH = {
     'unableToConnectToTheInternet': 'មិនអាចភ្ជាប់អ៊ីនធឺណិតបានទេ',
@@ -863,5 +871,9 @@ class Locales {
     'comingSoon': 'នៅពេលខាងមុខ!',
     'futureUpdate': 'មុខងារនឹងអាចប្រើប្រាស់បាននៅកំណែថ្មីខាងមុខ។.',
     'confirm2': 'សូមចុច បាទ/ចាស ដើម្បីបញ្ជាក់ថាអ្នកពិតជាចង់លុបគណនី។',
+    'viewAllLoans': 'មើលកម្ចីទាំងអស់',
+    'verifyLoan': 'ផ្ទៀងផ្ទាត់កម្ចី',
+    'disburseLoan': 'បញ្ចេញកម្ចី',
+    'approveLoan': 'អនុម័តកម្ចី',
   };
 }

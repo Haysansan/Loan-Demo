@@ -223,5 +223,9 @@
   "totalOS": "សរុបទឹកប្រាក់",
   "totalClient": "និង ចំនួនអតិថិជន",
   "deno": "DENO",
-  "approveLoans": "អនុម័ត​កម្ចី"
+  "approveLoans": "អនុម័ត​កម្ចី",
+  "viewAllLoans": "មើលកម្ចីទាំងអស់",
+  "verifyLoan": "ផ្ទៀងផ្ទាត់កម្ចី",
+  "disburseLoan": "បញ្ចេញកម្ចី",
+  "approveLoan": "អនុម័តកម្ចី"
 }
