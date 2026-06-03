@@ -22,17 +22,44 @@ class LoanApprovalCard extends StatelessWidget {
     return '${NumberFormat('#,###').format(value)} ៛';
   }
 
-  // ─── Status badge color ───
   Color _statusColor(String status) {
     switch (status.toLowerCase()) {
       case 'approved':
         return Colors.green;
       case 'rejected':
         return AppColor.red;
-      default: // pending
+      default:
         return Colors.grey;
     }
   }
+
+  /// Routes approve/reject to the correct controller method based on role + tab.
+  void _onApprove() {
+    if (controller.isCEO) {
+      controller.approveLoan(loan);
+    } else if (controller.selectedTab.value == 1) {
+      // BM – Verify tab
+      controller.verifyLoan(loan);
+    } else {
+      // BM – Disbursement tab
+      controller.disburseLoan(loan);
+    }
+  }
+
+  void _onReject() {
+    if (controller.isCEO) {
+      controller.rejectLoan(loan);
+    } else if (controller.selectedTab.value == 1) {
+      // BM – Verify tab
+      controller.rejectVerifyLoan(loan);
+    } else {
+      // BM – Disbursement tab
+      controller.rejectDisbursement(loan);
+    }
+  }
+
+  /// View All tab (tab 0) shows completed loans — no action buttons needed.
+  bool get _showActions => controller.selectedTab.value != 0;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +86,6 @@ class LoanApprovalCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Profile photo (falls back to placeholder automatically)
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: AppColor.lightGrey,
@@ -72,8 +98,6 @@ class LoanApprovalCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-
-                // Name / branch / date
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,14 +113,12 @@ class LoanApprovalCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        loan.submittedAt,
+                        'Village: ${loan.village}',
                         style: AppTextStyle.smallGreyRegular,
                       ),
                     ],
                   ),
                 ),
-
-                // Status badge
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
@@ -143,7 +165,6 @@ class LoanApprovalCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Column(
               children: [
-                // Row 1: Loan amount | Interest rate
                 Row(
                   children: [
                     _detailCell(
@@ -160,17 +181,16 @@ class LoanApprovalCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                // Row 2: Start date | End date
                 Row(
                   children: [
                     _detailCell(
-                      label: 'Start date',
-                      value: loan.startDate,
+                      label: 'Created on',
+                      value: loan.createAt,
                       valueBold: true,
                     ),
                     _detailCell(
-                      label: 'End date',
-                      value: loan.endDate,
+                      label: 'Cycle / Frequency',
+                      value: '${loan.cycle} / (${loan.frequency})',
                       valueBold: true,
                     ),
                   ],
@@ -185,95 +205,95 @@ class LoanApprovalCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Text(loan.productName, style: AppTextStyle.smallGreyRegular),
           ),
-          const DarkGreyDivider(),
 
-          // ── Comment text field ──
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
-            child: TextField(
-              controller: controller.getCommentController(loan.id),
-              decoration: InputDecoration(
-                hintText: 'Add a comment',
-                hintStyle: AppTextStyle.normalLightGreyRegular,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: UIConstants.radius.radiusAll,
-                  borderSide: const BorderSide(color: AppColor.lightGrey),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: UIConstants.radius.radiusAll,
-                  borderSide: const BorderSide(color: AppColor.lightGrey),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: UIConstants.radius.radiusAll,
-                  borderSide: const BorderSide(color: AppColor.lightGrey),
+          // ── Comment + action buttons (hidden on View All tab) ──
+          if (_showActions) ...[
+            const DarkGreyDivider(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+              child: TextField(
+                controller: controller.getCommentController(loan.id),
+                decoration: InputDecoration(
+                  hintText: 'Add a comment',
+                  hintStyle: AppTextStyle.normalLightGreyRegular,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: UIConstants.radius.radiusAll,
+                    borderSide: const BorderSide(color: AppColor.lightGrey),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: UIConstants.radius.radiusAll,
+                    borderSide: const BorderSide(color: AppColor.lightGrey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: UIConstants.radius.radiusAll,
+                    borderSide: const BorderSide(color: AppColor.lightGrey),
+                  ),
                 ),
               ),
             ),
-          ),
-
-          // ── Approve / Reject buttons ──
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 4, 12, 14),
-            child: Row(
-              children: [
-                // Approve
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => controller.approveLoan(loan),
-                    icon: const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                      size: 18,
-                    ),
-                    label: const Text(
-                      'Approve',
-                      style: TextStyle(
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 4, 12, 14),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _onApprove,
+                      icon: const Icon(
+                        Icons.check,
                         color: Colors.green,
-                        fontWeight: FontWeight.w600,
+                        size: 18,
                       ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      side: const BorderSide(color: Colors.green, width: 1.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: UIConstants.radius.radiusAll,
+                      label: Text(
+                        controller.isBM && controller.selectedTab.value == 2
+                            ? LocaleKeys.disburseLoan.tr
+                            : 'Approve',
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        side: const BorderSide(color: Colors.green, width: 1.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: UIConstants.radius.radiusAll,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                // Reject
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => controller.rejectLoan(loan),
-                    icon: const Icon(
-                      Icons.close,
-                      color: AppColor.red,
-                      size: 18,
-                    ),
-                    label: const Text(
-                      'Reject',
-                      style: TextStyle(
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _onReject,
+                      icon: const Icon(
+                        Icons.close,
                         color: AppColor.red,
-                        fontWeight: FontWeight.w600,
+                        size: 18,
                       ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      side: const BorderSide(color: AppColor.red, width: 1.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: UIConstants.radius.radiusAll,
+                      label: const Text(
+                        'Reject',
+                        style: TextStyle(
+                          color: AppColor.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        side: const BorderSide(color: AppColor.red, width: 1.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: UIConstants.radius.radiusAll,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
