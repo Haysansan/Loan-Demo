@@ -23,11 +23,13 @@ class ApproveTabButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color bgColor = isSelected ? AppColor.primary : Colors.white;
     final Color textColor =
-        isSelected ? Colors.white : (isAlert ? AppColor.red : Colors.black87);
+        isSelected
+            ? Colors.white
+            : (isAlert ? const Color(0xFF008B0C) : Colors.black87);
     final Color borderColor =
         isSelected
             ? AppColor.primary
-            : (isAlert ? AppColor.red : AppColor.lightGrey);
+            : (isAlert ? const Color(0xFF008B0C) : AppColor.lightGrey);
 
     return Expanded(
       child: GestureDetector(
