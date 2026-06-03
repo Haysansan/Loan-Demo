@@ -54,4 +54,5 @@ class EndPoints {
 
   static String get storeDeNoCo => 'loan/deno_store';
   static String get getPendingApproval => 'loan/get_approve_disburse';
+  static String get getBranches => 'loan/get_branch';
 }

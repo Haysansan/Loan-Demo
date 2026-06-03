@@ -83,7 +83,7 @@ class DisburmentListController extends GetxController {
       isBranchLoading.value = true;
       final res = await Get.find<ApiService>().get(
         EndPoints
-            .login, // add `static String get getBranches => 'get_branches';` to EndPoints
+            .getBranches, // add `static String get getBranches => 'get_branches';` to EndPoints
         isShowLoading: false,
       );
       final data = getPropertyFromJson(res.data, 'data');

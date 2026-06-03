@@ -156,46 +156,45 @@ class DisburmentListView extends GetView<DisburmentListController> {
         10.height,
 
         // ── Totals – visible only after a branch is chosen ──
-        Obx(() {
-          if (controller.selectedBranch.value == null) {
-            return const SizedBox.shrink();
-          }
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  top: 5.0,
-                  right: 10.0,
-                  bottom: 5.0,
-                ),
-                child: TotalDisburmentWidget(
-                  icon: Icons.people_alt,
-                  packages:
-                      '${controller.totalClient.text}'
-                      ' ${LocaleKeys.clients.tr}',
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  top: 0.0,
-                  right: 10.0,
-                  bottom: 0.0,
-                ),
-                child: TotalDisburmentAmountWidget(
-                  codKhr: '${controller.totalAmount.text}',
-                ),
-              ),
-            ],
-          );
-        }),
-
+        // Obx(() {
+        //   if (controller.selectedBranch.value == null) {
+        //     return const SizedBox.shrink();
+        //   }
+        //   return Column(
+        //     children: [
+        //       Padding(
+        //         padding: const EdgeInsets.only(
+        //           left: 10.0,
+        //           top: 5.0,
+        //           right: 10.0,
+        //           bottom: 5.0,
+        //         ),
+        //         child: TotalDisburmentWidget(
+        //           icon: Icons.people_alt,
+        //           packages:
+        //               '${controller.totalClient.text}'
+        //               ' ${LocaleKeys.clients.tr}',
+        //         ),
+        //       ),
+        //       Padding(
+        //         padding: const EdgeInsets.only(
+        //           left: 10.0,
+        //           top: 0.0,
+        //           right: 10.0,
+        //           bottom: 0.0,
+        //         ),
+        //         child: TotalDisburmentAmountWidget(
+        //           codKhr: '${controller.totalAmount.text}',
+        //         ),
+        //       ),
+        //     ],
+        //   );
+        // }),
         10.height,
 
         // ── Search bar ──
         _buildSearchBar(),
-
+        20.height,
         // ── List ──
         Obx(() {
           if (controller.isLoading.value) {
