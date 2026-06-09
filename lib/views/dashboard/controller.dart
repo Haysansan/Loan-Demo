@@ -40,6 +40,11 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
     if (UserRepository.shared.isBM || UserRepository.shared.isEco) {
       fetchPendingApprovalCount();
     }
@@ -51,34 +56,22 @@ class DashboardController extends GetxController {
     super.onClose();
   }
 
-  // Future<void> fetchPendingApprovalCount() async {
-  //   try {
-  //     final res = await Get.find<ApiService>().get(
-  //       EndPoints.getApproveDisburse,
-  //       isShowLoading: false,
-  //     );
-  //     final data = getPropertyFromJson(res.data, 'data');
-  //     if (data is List) {
-  //       pendingApprovalCount.value = data.length;
-  //     } else {
-  //       final count = getPropertyFromJson(res.data, 'total');
-  //       pendingApprovalCount.value =
-  //           int.tryParse(count?.toString() ?? '0') ?? 0;
-  //     }
-  //   } catch (_) {
-  //     // silently fail — badge stays 0
-  //   }
-  // }
   Future<void> fetchPendingApprovalCount() async {
     try {
-      final approveCtl = Get.find<ApproveLoansController>();
-      if (approveCtl.isBM) {
-        pendingApprovalCount.value = approveCtl.verifyCount;
-      } else if (approveCtl.isCEO) {
-        pendingApprovalCount.value = approveCtl.acceptCount;
+      final res = await Get.find<ApiService>().get(
+        EndPoints.getApproveDisburse,
+        isShowLoading: false,
+      );
+      final data = getPropertyFromJson(res.data, 'data');
+      if (data is List) {
+        pendingApprovalCount.value = data.length;
+      } else {
+        final count = getPropertyFromJson(res.data, 'total');
+        pendingApprovalCount.value =
+            int.tryParse(count?.toString() ?? '0') ?? 0;
       }
     } catch (_) {
-      // controller not loaded yet, badge stays at current value
+      // silently fail — badge stays 0
     }
   }
 
