@@ -45,9 +45,7 @@ class DashboardController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    if (UserRepository.shared.isBM || UserRepository.shared.isEco) {
-      fetchPendingApprovalCount();
-    }
+    fetchPendingApprovalCount(); // always call to update count on dashboard
   }
 
   @override
@@ -57,22 +55,34 @@ class DashboardController extends GetxController {
   }
 
   Future<void> fetchPendingApprovalCount() async {
+    pendingApprovalCount.value = 0;
+    if (!UserRepository.shared.isBM && !UserRepository.shared.isEco) return;
     try {
+      final branchId = await SharedPreferencesManager.getIntValue('branch_id');
+      final userId = await SharedPreferencesManager.getIntValue('user_id');
+
       final res = await Get.find<ApiService>().get(
         EndPoints.getApproveDisburse,
+        queryParameters: {'branch_id': branchId, 'user_id': userId},
         isShowLoading: false,
       );
-      final data = getPropertyFromJson(res.data, 'data');
-      if (data is List) {
-        pendingApprovalCount.value = data.length;
-      } else {
-        final count = getPropertyFromJson(res.data, 'total');
+
+      final raw = getPropertyFromJson(res.data, 'data');
+      if (raw is! List) return;
+
+      if (UserRepository.shared.isBM) {
         pendingApprovalCount.value =
-            int.tryParse(count?.toString() ?? '0') ?? 0;
+            raw
+                .where(
+                  (e) =>
+                      e['status'] == 'submitted' || e['status'] == 'approved',
+                )
+                .length;
+      } else if (UserRepository.shared.isEco) {
+        pendingApprovalCount.value =
+            raw.where((e) => e['status'] == 'pending').length;
       }
-    } catch (_) {
-      // silently fail — badge stays 0
-    }
+    } catch (_) {}
   }
 
   void gridHandleTap(DeliveryStatus status) {
