@@ -301,6 +301,8 @@ class LocaleKeys {
   static const verifyLoan = 'verifyLoan';
   static const disburseLoan = 'disburseLoan';
   static const approveLoan = 'approveLoan';
+  static const collected = 'collected';
+  static const unCollected = 'unCollected';
 }
 
 class Locales {
@@ -591,6 +593,8 @@ class Locales {
     'verifyLoan': 'Verify Loans',
     'disburseLoan': 'Disburse Loans',
     'approveLoan': 'Approve Loans',
+    'collected': 'Collected',
+    'unCollected': 'Uncollected',
   };
   static const KM_KH = {
     'unableToConnectToTheInternet': 'មិនអាចភ្ជាប់អ៊ីនធឺណិតបានទេ',
@@ -875,5 +879,7 @@ class Locales {
     'verifyLoan': 'ផ្ទៀងផ្ទាត់កម្ចី',
     'disburseLoan': 'បញ្ចេញកម្ចី',
     'approveLoan': 'អនុម័តកម្ចី',
+    'collected': 'បានប្រមូល',
+    'unCollected': 'មិនទាន់ប្រមូល',
   };
 }

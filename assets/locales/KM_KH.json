@@ -227,5 +227,7 @@
   "viewAllLoans": "មើលកម្ចីទាំងអស់",
   "verifyLoan": "ផ្ទៀងផ្ទាត់កម្ចី",
   "disburseLoan": "បញ្ចេញកម្ចី",
-  "approveLoan": "អនុម័តកម្ចី"
+  "approveLoan": "អនុម័តកម្ចី",
+  "collected": "បានប្រមូល",
+  "unCollected": "មិនទាន់ប្រមូល"
 }

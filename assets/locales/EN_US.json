@@ -227,5 +227,7 @@
   "acceptLoan": "Accept Loan",
   "viewAllLoans": "View All Loans",
   "verifyLoan": "Verify Loans",
-  "disburseLoan": "Disburse Loans"
+  "disburseLoan": "Disburse Loans",
+  "collected": "Collected",
+  "unCollected": "Uncollected"
 }
