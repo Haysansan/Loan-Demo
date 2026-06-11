@@ -10,102 +10,121 @@ class GuarantorFormSheet extends GetView<GuarantorController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.chevron_left, color: Colors.black, size: 28),
-          onPressed: Get.back,
-        ),
-        centerTitle: true,
-        title: const Text(
-          'Add Guarantors',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: Colors.black,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.cancel, color: Colors.grey),
-            onPressed: Get.back,
-          ),
-        ],
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        child: Form(
-          key: controller.formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const BorrowerFieldLabel('Full Name', required: true),
-              _buildTextField(controller.fullNameController, 'Full name'),
-              const SizedBox(height: 20),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const BorrowerFieldLabel('Date of birth'),
-                        BorrowerDatePickerField(obs: controller.selectedDate),
-                      ],
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.chevron_left,
+                    color: Colors.black,
+                    size: 28,
+                  ),
+                  onPressed: Get.back,
+                ),
+                const Expanded(
+                  child: Center(
+                    child: Text(
+                      'Add Guarantors',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
+                ),
+                IconButton(
+                  icon: const Icon(Icons.cancel, color: Colors.grey),
+                  onPressed: Get.back,
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Form(
+                key: controller.formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const BorrowerFieldLabel('Full Name', required: true),
+                    _buildTextField(controller.fullNameController, 'Full name'),
+                    const SizedBox(height: 20),
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const BorrowerFieldLabel('Gender'),
-                        BorrowerGenderDropdown(
-                          selected: controller.selectedGender,
-                          options: controller.genderOptions,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const BorrowerFieldLabel('Date of birth'),
+                              BorrowerDatePickerField(
+                                obs: controller.selectedDate,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const BorrowerFieldLabel('Gender'),
+                              BorrowerGenderDropdown(
+                                selected: controller.selectedGender,
+                                options: controller.genderOptions,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const BorrowerFieldLabel('Phone number', required: true),
-              _buildTextField(
-                controller.phoneController,
-                'Phone number',
-                keyboard: TextInputType.phone,
-              ),
-              const SizedBox(height: 20),
-              const BorrowerFieldLabel('Type of ID', required: true),
-              Obx(
-                () => BorrowerIdTypeDropdown<GuarantorIdTypeModel>(
-                  selected: controller.selectedIdType,
-                  items: controller.idTypes,
+                    const SizedBox(height: 20),
+                    const BorrowerFieldLabel('Phone number', required: true),
+                    _buildTextField(
+                      controller.phoneController,
+                      'Phone number',
+                      keyboard: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 20),
+                    const BorrowerFieldLabel('Type of ID', required: true),
+                    Obx(
+                      () => BorrowerIdTypeDropdown<GuarantorIdTypeModel>(
+                        selected: controller.selectedIdType,
+                        items: controller.idTypes,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const BorrowerFieldLabel('National ID', required: true),
+                    _buildTextField(
+                      controller.nationalIdController,
+                      'Numbers..',
+                      keyboard: TextInputType.number,
+                    ),
+                    const SizedBox(height: 20),
+                    const BorrowerFieldLabel('Relationship', required: true),
+                    _buildTextField(
+                      controller.relationshipController,
+                      'Relationship',
+                    ),
+                    const SizedBox(height: 32),
+                    BorrowerSubmitButton(onPressed: controller.submit),
+                    const SizedBox(height: 24),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              const BorrowerFieldLabel('National ID', required: true),
-              _buildTextField(
-                controller.nationalIdController,
-                'Numbers..',
-                keyboard: TextInputType.number,
-              ),
-              const SizedBox(height: 20),
-              const BorrowerFieldLabel('Relationship', required: true),
-              _buildTextField(
-                controller.relationshipController,
-                'Relationship',
-              ),
-              const SizedBox(height: 32),
-              BorrowerSubmitButton(onPressed: controller.submit),
-              const SizedBox(height: 24),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
