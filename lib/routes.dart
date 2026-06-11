@@ -34,6 +34,7 @@ class Routes {
   static const String paidoff = '/paidoff';
 
   static const String dino = '/dino';
+  static const String received = '/received';
 
   static List<GetPage> pages = [
     GetPage(
@@ -162,5 +163,10 @@ class Routes {
       binding: ApproveLoansBinding(),
     ),
     GetPage(name: dino, page: () => DinoView(), binding: DinoBinding()),
+    GetPage(
+      name: received,
+      page: () => const ReceivedView(),
+      binding: ReceivedBinding(),
+    ),
   ];
 }

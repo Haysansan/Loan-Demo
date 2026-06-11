@@ -29,3 +29,4 @@ export 'transfer_data/transferdata.dart';
 export 'payforeachother/payfoeachother.dart';
 export 'dino/dino.dart';
 export 'approve_loans/approve_loans.dart';
+export 'received/received.dart';

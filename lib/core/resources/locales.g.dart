@@ -303,6 +303,7 @@ class LocaleKeys {
   static const approveLoan = 'approveLoan';
   static const collected = 'collected';
   static const unCollected = 'unCollected';
+  static const received = 'received';
 }
 
 class Locales {
@@ -595,6 +596,7 @@ class Locales {
     'approveLoan': 'Approve Loans',
     'collected': 'Collected',
     'unCollected': 'Uncollected',
+    'received': 'Received',
   };
   static const KM_KH = {
     'unableToConnectToTheInternet': 'មិនអាចភ្ជាប់អ៊ីនធឺណិតបានទេ',
@@ -881,5 +883,6 @@ class Locales {
     'approveLoan': 'អនុម័តកម្ចី',
     'collected': 'បានប្រមូល',
     'unCollected': 'មិនទាន់ប្រមូល',
+    'received': 'បានទទួល',
   };
 }

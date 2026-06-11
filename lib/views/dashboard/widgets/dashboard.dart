@@ -18,6 +18,7 @@ class DashboardWidget extends StatelessWidget {
     LocaleKeys.writtenoff.tr,
     LocaleKeys.approveLoans.tr,
     LocaleKeys.datatransfer.tr,
+    LocaleKeys.received.tr,
     // LocaleKeys.payforearchother.tr,
     // LocaleKeys.deno.tr,
   ];
@@ -54,6 +55,7 @@ class DashboardWidget extends StatelessWidget {
     Image.asset('assets/images/icon/writtenoff.png', width: 45, height: 45),
     Image.asset('assets/images/icon/repayment.png', width: 30, height: 30),
     Image.asset('assets/images/icon/transfer.png', width: 30, height: 30),
+    Image.asset('assets/images/icon/transfer.png', width: 30, height: 30),
     // Image.asset('assets/images/icon/transfer.png', width: 35, height: 35),
     // Image.asset('assets/images/icon/paidofother.png', width: 35, height: 35),
   ];
@@ -73,7 +75,7 @@ class DashboardWidget extends StatelessWidget {
   ];
 
   // BM / CEO only see these key indices
-  static const _bmCeoIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  static const _bmCeoIndices = [0, 1, 2, 3, 4, 5, 6, 7, 9];
 
   (List catNames, List<Color> catColors, List<Widget> catIcons)
   _buildFilteredLists() {
@@ -163,6 +165,11 @@ class DashboardWidget extends StatelessWidget {
       Get.find<DashboardController>().fetchPendingApprovalCount();
     });
   }
+
+  void ReceivedDataHandleTap() {
+    Get.back();
+    Get.toNamed(Routes.received);
+  }
   // void Approval() {
   //   Get.back(); // close drawer or whatever
   //   Get.toNamed(Routes.approveLoans);
@@ -248,6 +255,9 @@ class DashboardWidget extends StatelessWidget {
                               } else if (catNames[index] ==
                                   LocaleKeys.datatransfer.tr) {
                                 TransferDataHandleTap();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.received.tr) {
+                                ReceivedDataHandleTap();
                               }
                               // else if (catNames[index] ==
                               //     LocaleKeys.deno.tr) {
