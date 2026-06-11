@@ -46,6 +46,11 @@ class ApproveLoansController extends GetxController {
   int get acceptCount => acceptLoans.length;
 
   // ─── Helpers ───
+  Future<String?> _getUserName() async {
+    final value = await SharedPreferencesManager.get('name');
+    return value as String?;
+  }
+
   Future<int?> _getBranchId() =>
       SharedPreferencesManager.getIntValue('branch_id');
   Future<int?> _getUserId() => SharedPreferencesManager.getIntValue('user_id');
@@ -313,18 +318,27 @@ class ApproveLoansController extends GetxController {
     try {
       final comment = _commentControllers[loan.id]?.text.trim() ?? '';
       final userId = await _getUserId();
+      final userName = await _getUserName();
       final today = DateTime.now().toIso8601String().split('T')[0];
 
-      await Get.find<ApiService>().post(endpoint, {
+      final body = <String, dynamic>{
         'loan_id': loan.loanId,
         'client_id': loan.clientId,
         'user_id': userId,
+        'created_by_id': userId,
+        'user': userName,
         'verify_on_date': today,
         'approved_on_date': today,
         'disbursed_on_date': today,
         'comment': comment,
         'status': status,
-      }, isShowLoading: true);
+      };
+
+      if (status == 'rejected') {
+        body['rejected_notes'] = comment;
+      }
+
+      await Get.find<ApiService>().post(endpoint, body, isShowLoading: true);
 
       _moveToViewAll(loan: loan, newStatus: status);
       _refreshDashboardBadge();
