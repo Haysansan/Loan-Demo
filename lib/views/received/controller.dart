@@ -85,6 +85,123 @@ class ReceivedController extends GetxController {
             .replaceAll('.00', '')
         : 'N/A';
   }
+  // class ReceivedController extends GetxController {
+  //   final RxBool isLoadingList = false.obs;
+  //   final RxBool isReceiving = false.obs;
+
+  //   final RxList<PaymentModel> pendingRepayments = <PaymentModel>[].obs;
+  //   final RxList<PaymentModel> filteredRepayments = <PaymentModel>[].obs;
+  //   final RxList<String> loanOfficers = <String>[].obs;
+
+  //   final TextEditingController totalClient = TextEditingController();
+  //   final TextEditingController totalAmount = TextEditingController();
+
+  //   String? selectedOfficer;
+
+  //   @override
+  //   void onInit() {
+  //     super.onInit();
+  //     fetchPendingRepayments();
+  //   }
+
+  //   Future<int?> _getBranchId() async {
+  //     return await SharedPreferencesManager.getIntValue('branch_id');
+  //   }
+
+  //   Future<int?> _getUserId() async {
+  //     return await SharedPreferencesManager.getIntValue('user_id');
+  //   }
+
+  //   Future<void> fetchPendingRepayments() async {
+  //     isLoadingList.value = true;
+  //     try {
+  //       final branchId = await _getBranchId();
+  //       final response = await Get.find<ApiService>().get(
+  //         '${EndPoints.repaymentPending}?branch_id=$branchId',
+  //       );
+
+  //       final List data = response.data['data'] ?? [];
+  //       pendingRepayments.value =
+  //           data.map((e) => PaymentModel.fromJson(e)).toList();
+
+  //       _extractLoanOfficers();
+  //       _updateTotals();
+  //     } catch (e) {
+  //       DialogManager.showDialog(
+  //         title: LocaleKeys.error.tr,
+  //         subTitle: LocaleKeys.syncFailed.tr,
+  //         onPressed: () => Get.back(),
+  //       );
+  //     } finally {
+  //       isLoadingList.value = false;
+  //     }
+  //   }
+
+  //   void _extractLoanOfficers() {
+  //     final officers =
+  //         pendingRepayments.map((e) => e.loan_officer).toSet().toList();
+  //     loanOfficers.value = officers;
+  //   }
+
+  //   void filterByOfficer(String? officer) {
+  //     selectedOfficer = officer;
+  //     if (officer == null) {
+  //       filteredRepayments.value = pendingRepayments;
+  //     } else {
+  //       filteredRepayments.value =
+  //           pendingRepayments.where((e) => e.loan_officer == officer).toList();
+  //     }
+  //     _updateTotals();
+  //   }
+
+  //   void _updateTotals() {
+  //     final list =
+  //         selectedOfficer == null ? pendingRepayments : filteredRepayments;
+  //     totalClient.text = list.length.toString();
+  //     final sum = list.fold(
+  //       0.0,
+  //       (prev, e) => prev + (double.tryParse(e.total_repayment) ?? 0.0),
+  //     );
+  //     totalAmount.text = _formatCurrency(sum.toString());
+  //   }
+
+  //   Future<void> receiveRepayment(PaymentModel item) async {
+  //     isReceiving.value = true;
+  //     try {
+  //       final userId = await _getUserId();
+  //       await Get.find<ApiService>().post(
+  //         '${EndPoints.repaymentReceive}/${item.id}/receive',
+  //         {'received_by_id': userId},
+  //       );
+
+  //       pendingRepayments.remove(item);
+  //       filteredRepayments.remove(item);
+  //       _updateTotals();
+
+  //       DialogManager.showDialog(
+  //         title: LocaleKeys.successfully.tr,
+  //         subTitle: LocaleKeys.youHavesuccessfullysyncData.tr,
+  //         onPressed: () => Get.back(),
+  //       );
+  //     } catch (e) {
+  //       DialogManager.showDialog(
+  //         title: LocaleKeys.error.tr,
+  //         subTitle: LocaleKeys.syncFailed.tr,
+  //         onPressed: () => Get.back(),
+  //       );
+  //     } finally {
+  //       isReceiving.value = false;
+  //     }
+  //   }
+
+  //   String _formatCurrency(String amount) {
+  //     final parsed = double.tryParse(amount);
+  //     if (parsed == null) return 'N/A';
+  //     return NumberFormat.currency(
+  //       locale: 'en_US',
+  //       symbol: '',
+  //     ).format(parsed).replaceAll('.00', '');
+  //   }
 
   Future<void> sendDataToServer() async {
     WakelockPlus.enable();
