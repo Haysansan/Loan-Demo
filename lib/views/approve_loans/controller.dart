@@ -14,46 +14,29 @@ class ApproveLoansController extends GetxController {
   final RxInt selectedTab = 1.obs;
   final RxBool isLoading = false.obs;
 
-  // ─── Lists per stage ───
+  // ─── Live lists ───
   final RxList<LoanApprovalModel> allLoans = <LoanApprovalModel>[].obs;
   final RxList<LoanApprovalModel> verifyLoans = <LoanApprovalModel>[].obs;
   final RxList<LoanApprovalModel> disbursementLoans = <LoanApprovalModel>[].obs;
   final RxList<LoanApprovalModel> acceptLoans = <LoanApprovalModel>[].obs;
 
-  // ─── Search ───
+  List<LoanApprovalModel> _allSnapshot = [];
+  List<LoanApprovalModel> _verifySnapshot = [];
+  List<LoanApprovalModel> _disbursementSnapshot = [];
+  List<LoanApprovalModel> _acceptSnapshot = [];
   final TextEditingController searchCtl = TextEditingController();
 
-  // ─── Per-card comment fields ────
   final Map<int, TextEditingController> _commentControllers = {};
   TextEditingController getCommentController(int loanId) =>
       _commentControllers.putIfAbsent(loanId, () => TextEditingController());
-
-  // ─── Derived ────
   List<LoanApprovalModel> get currentList {
-    if (isCEO) return selectedTab.value == 0 ? allLoans : acceptLoans;
     switch (selectedTab.value) {
       case 1:
-        return verifyLoans;
+        return isCEO ? acceptLoans : verifyLoans;
       case 2:
         return disbursementLoans;
       default:
         return allLoans;
-    }
-  }
-
-  String get currentTitle {
-    if (isCEO) {
-      return selectedTab.value == 0
-          ? LocaleKeys.viewAllLoans.tr
-          : LocaleKeys.approveLoan.tr;
-    }
-    switch (selectedTab.value) {
-      case 1:
-        return LocaleKeys.verifyLoan.tr;
-      case 2:
-        return LocaleKeys.disburseLoan.tr;
-      default:
-        return LocaleKeys.viewAllLoans.tr;
     }
   }
 
@@ -62,10 +45,11 @@ class ApproveLoansController extends GetxController {
   int get disbursementCount => disbursementLoans.length;
   int get acceptCount => acceptLoans.length;
 
-  // ─── Helpers ──────
+  // ─── Helpers ───
   Future<int?> _getBranchId() =>
       SharedPreferencesManager.getIntValue('branch_id');
   Future<int?> _getUserId() => SharedPreferencesManager.getIntValue('user_id');
+  String _status(LoanApprovalModel l) => l.status.toLowerCase();
 
   Future<UserType?> _resolveRole() async {
     if (UserRepository.shared.isBM) return UserType.bm;
@@ -79,12 +63,10 @@ class ApproveLoansController extends GetxController {
     }
   }
 
-  // ─── Init ─────────
   @override
   void onInit() {
     super.onInit();
-    _loadAllLists();
-    _initRole();
+    _bootstrap();
   }
 
   @override
@@ -94,7 +76,8 @@ class ApproveLoansController extends GetxController {
     super.onClose();
   }
 
-  Future<void> _initRole() async {
+  // Role must resolve before lists load — one entry point to avoid race conditions
+  Future<void> _bootstrap() async {
     try {
       isLoading.value = true;
       userRole.value = await _resolveRole();
@@ -107,10 +90,10 @@ class ApproveLoansController extends GetxController {
     }
   }
 
-  // ─── Public refresh ────────
   Future<void> fetchLoans() async {
     try {
       isLoading.value = true;
+      searchCtl.clear();
       await _loadAllLists();
     } catch (e) {
       if (isClosed) return;
@@ -120,7 +103,12 @@ class ApproveLoansController extends GetxController {
     }
   }
 
-  // ─── Central fetch — one API call, split by status ──────
+  // Status flow:
+  //   submitted - BM Verify tab
+  //   pending   - BM View All ("verified, waiting CEO") + CEO Approve tab
+  //   approved  - CEO View All ("waiting disburse")    + BM Disburse tab
+  //   rejected  - BM View All + CEO View All (whoever is relevant)
+  //   disbursed - BM View All + CEO View All
   Future<void> _loadAllLists() async {
     final branchId = await _getBranchId();
     final userId = await _getUserId();
@@ -139,48 +127,35 @@ class ApproveLoansController extends GetxController {
             .map((e) => LoanApprovalModel.fromJson(e as Map<String, dynamic>))
             .toList();
 
-    // ── Status legend ───────
-    // "pending"   → CO submitted, awaiting BM verification   → BM: Verify tab
-    // "submitted" → BM verified, awaiting CEO approval        → CEO: Approve tab
-    // "approved"  → CEO approved, awaiting BM disbursement    → BM: Disburse tab
-    // "disbursed" → fully done                                → View All
-    // "rejected"  → declined at any stage                     → View All
-
     if (isBM) {
-      verifyLoans.value =
-          all.where((l) => l.status.toLowerCase() == 'submitted').toList();
+      verifyLoans.value = all.where((l) => _status(l) == 'submitted').toList();
 
       disbursementLoans.value =
-          all.where((l) => l.status.toLowerCase() == 'approved').toList();
+          all.where((l) => _status(l) == 'approved').toList();
 
+      final actionStatuses = {'submitted', 'approved'};
       allLoans.value =
-          all
-              .where(
-                (l) =>
-                    l.status.toLowerCase() == 'disbursed' ||
-                    l.status.toLowerCase() == 'rejected',
-              )
-              .toList();
+          all.where((l) => !actionStatuses.contains(_status(l))).toList();
+
+      _verifySnapshot = List.of(verifyLoans);
+      _disbursementSnapshot = List.of(disbursementLoans);
+      _allSnapshot = List.of(allLoans);
     } else if (isCEO) {
-      acceptLoans.value =
-          all.where((l) => l.status.toLowerCase() == 'pending').toList();
+      acceptLoans.value = all.where((l) => _status(l) == 'pending').toList();
 
+      final actionStatuses = {'pending'};
       allLoans.value =
-          all
-              .where(
-                (l) =>
-                    l.status.toLowerCase() == 'disbursed' ||
-                    l.status.toLowerCase() == 'rejected',
-              )
-              .toList();
+          all.where((l) => !actionStatuses.contains(_status(l))).toList();
+
+      _acceptSnapshot = List.of(acceptLoans);
+      _allSnapshot = List.of(allLoans);
     }
   }
 
-  // ─── Search ───────
   void search() {
     final q = searchCtl.text.trim().toLowerCase();
     if (q.isEmpty) {
-      fetchLoans();
+      _restoreFromSnapshots();
       return;
     }
 
@@ -188,28 +163,32 @@ class ApproveLoansController extends GetxController {
         l.client.toLowerCase().contains(q) ||
         l.clientCode.toLowerCase().contains(q);
 
-    switch (selectedTab.value) {
-      case 0:
-        allLoans.value = allLoans.where(match).toList();
-        break;
-      case 1:
-        if (isCEO)
-          acceptLoans.value = acceptLoans.where(match).toList();
-        else
-          verifyLoans.value = verifyLoans.where(match).toList();
-        break;
-      case 2:
-        disbursementLoans.value = disbursementLoans.where(match).toList();
-        break;
+    allLoans.value = _allSnapshot.where(match).toList();
+
+    if (isBM) {
+      verifyLoans.value = _verifySnapshot.where(match).toList();
+      disbursementLoans.value = _disbursementSnapshot.where(match).toList();
+    } else {
+      acceptLoans.value = _acceptSnapshot.where(match).toList();
     }
   }
 
   void clearSearch() {
     searchCtl.clear();
-    fetchLoans();
+    _restoreFromSnapshots();
   }
 
-  // ─── BM: Verify → "submitted" (sends to CEO) ────────────
+  void _restoreFromSnapshots() {
+    allLoans.value = List.of(_allSnapshot);
+    if (isBM) {
+      verifyLoans.value = List.of(_verifySnapshot);
+      disbursementLoans.value = List.of(_disbursementSnapshot);
+    } else {
+      acceptLoans.value = List.of(_acceptSnapshot);
+    }
+  }
+
+  // BM: verify - pending (CEO sees it in Approve tab)
   Future<void> verifyLoan(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Verification',
@@ -220,13 +199,13 @@ class ApproveLoansController extends GetxController {
           () => _postAction(
             endpoint: EndPoints.verifyLoan,
             loan: loan,
-            status: 'submitted',
+            status: 'pending',
             successMsg: 'Loan verified and sent to CEO.',
           ),
     );
   }
 
-  // ─── BM: Reject from Verify tab ─────────────
+  // BM: reject from Verify tab - stays on BM side, never reaches CEO
   Future<void> rejectVerifyLoan(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Rejection',
@@ -242,7 +221,7 @@ class ApproveLoansController extends GetxController {
     );
   }
 
-  // ─── CEO: Approve → "approved" (sends back to BM Disburse tab) ──────
+  // CEO: approve - BM sees it in Disburse tab
   Future<void> approveLoan(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Approval',
@@ -258,7 +237,7 @@ class ApproveLoansController extends GetxController {
     );
   }
 
-  // ─── CEO: Reject ───
+  // CEO: reject - stays on CEO side
   Future<void> rejectLoan(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Rejection',
@@ -274,7 +253,7 @@ class ApproveLoansController extends GetxController {
     );
   }
 
-  // ─── BM: Disburse → "disbursed" ──────────────
+  // BM: disburse - done
   Future<void> disburseLoan(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Disbursement',
@@ -290,11 +269,11 @@ class ApproveLoansController extends GetxController {
     );
   }
 
-  // ─── BM: Reject from Disburse tab ────────────
+  // BM: reject from Disburse tab
   Future<void> rejectDisbursement(LoanApprovalModel loan) async {
     _confirm(
       title: 'Confirm Rejection',
-      body: 'Reject loan disbursement for ${loan.client}?',
+      body: 'Reject disbursement for ${loan.client}?',
       btnText: 'REJECT',
       onConfirm:
           () => _postAction(
@@ -306,7 +285,6 @@ class ApproveLoansController extends GetxController {
     );
   }
 
-  // ─── Shared helpers ─────────
   void _confirm({
     required String title,
     required String body,
@@ -348,14 +326,13 @@ class ApproveLoansController extends GetxController {
         'status': status,
       }, isShowLoading: true);
 
-      // Optimistic update — NO fetchLoans() call here
-      _moveToNextStage(loan: loan, newStatus: status);
+      _moveToViewAll(loan: loan, newStatus: status);
       _refreshDashboardBadge();
 
       DialogManager.showDialog(
         title: LocaleKeys.successfully.tr,
         subTitle: successMsg,
-        onPressed: () => Get.back(), // just close dialog, nothing else
+        onPressed: () {},
       );
     } catch (e) {
       if (isClosed) return;
@@ -363,69 +340,29 @@ class ApproveLoansController extends GetxController {
     }
   }
 
-  void _moveToNextStage({
+  void _moveToViewAll({
     required LoanApprovalModel loan,
     required String newStatus,
   }) {
-    // Remove from all active lists
     verifyLoans.removeWhere((l) => l.loanId == loan.loanId);
     disbursementLoans.removeWhere((l) => l.loanId == loan.loanId);
     acceptLoans.removeWhere((l) => l.loanId == loan.loanId);
     allLoans.removeWhere((l) => l.loanId == loan.loanId);
 
-    final updated = LoanApprovalModel(
-      id: loan.id,
-      client: loan.client,
-      branch: loan.branch,
-      village: loan.village,
-      creditOfficer: loan.creditOfficer,
-      loanAmount: loan.loanAmount,
-      interestRate: loan.interestRate,
-      createAt: loan.createAt,
-      cycle: loan.cycle,
-      loanTerm: loan.loanTerm,
-      status: newStatus,
-      photo: loan.photo,
-      loanId: loan.loanId,
-      clientCode: loan.clientCode,
-      clientId: loan.clientId,
-      frequency: loan.frequency,
-    );
+    _verifySnapshot.removeWhere((l) => l.loanId == loan.loanId);
+    _disbursementSnapshot.removeWhere((l) => l.loanId == loan.loanId);
+    _acceptSnapshot.removeWhere((l) => l.loanId == loan.loanId);
+    _allSnapshot.removeWhere((l) => l.loanId == loan.loanId);
 
-    switch (newStatus.toLowerCase()) {
-      // BM verified → goes to CEO's accept tab (not visible to BM)
-      // Just remove from BM verify, done.
-      case 'submitted':
-        break;
-
-      // CEO approved → goes to BM's disburse tab
-      // (This is on CEO side, so we just remove from CEO's accept list)
-      case 'approved':
-        break;
-
-      // BM disbursed → goes to View All
-      case 'disbursed':
-        allLoans.insert(0, updated);
-        break;
-
-      // Rejected at any stage → goes to View All
-      case 'rejected':
-        allLoans.insert(0, updated);
-        break;
-    }
+    final updated = loan.copyWith(status: newStatus);
+    allLoans.insert(0, updated);
+    _allSnapshot.insert(0, updated);
   }
 
   void _refreshDashboardBadge() {
     try {
       final dashCtl = Get.find<DashboardController>();
-      // Derive count directly from our already-updated lists — no API call
-      if (isBM) {
-        dashCtl.pendingApprovalCount.value = verifyCount;
-      } else if (isCEO) {
-        dashCtl.pendingApprovalCount.value = acceptCount;
-      }
-    } catch (_) {
-      // DashboardController not in scope, ignore
-    }
+      dashCtl.pendingApprovalCount.value = isBM ? verifyCount : acceptCount;
+    } catch (_) {}
   }
 }

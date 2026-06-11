@@ -35,29 +35,41 @@ class LoanApprovalModel {
     required this.frequency,
   });
 
+  LoanApprovalModel copyWith({String? status}) {
+    return LoanApprovalModel(
+      id: id,
+      client: client,
+      branch: branch,
+      village: village,
+      creditOfficer: creditOfficer,
+      loanAmount: loanAmount,
+      interestRate: interestRate,
+      createAt: createAt,
+      cycle: cycle,
+      loanTerm: loanTerm,
+      status: status ?? this.status,
+      photo: photo,
+      loanId: loanId,
+      clientCode: clientCode,
+      clientId: clientId,
+      frequency: frequency,
+    );
+  }
+
   factory LoanApprovalModel.fromJson(Map<String, dynamic> json) {
     return LoanApprovalModel(
       id: json['id'] ?? 0,
-      // API may return 'client' or 'client_name'
       client: json['client'] ?? json['client_name'] ?? 'N/A',
       branch: json['branch'] ?? 'N/A',
-      // API may return 'submitted_at' or 'created_at'
-      // submittedAt: json['submitted_at'] ?? json['created_at'] ?? 'N/A',
       creditOfficer: json['loan_officer'] ?? json['credit_officer'] ?? 'N/A',
-      // Amount is stored as a string to preserve formatting
       loanAmount:
           json['principal']?.toString() ??
           json['loan_amount']?.toString() ??
           '0',
       interestRate: json['interest_rate'] ?? 'N/A',
-      // start date = when loan was created
       createAt: json['disbursement_date']?.toString().split(' ')[0] ?? 'N/A',
-      // end date = cycle number
       cycle: 'វដ្តទី ${json['cycle'] ?? 'N/A'}',
-      // product name from API
-      // productName: json['product_name'] ?? json['loan_term'] ?? 'N/A',
       loanTerm: json["loan_term"] ?? 'N/A',
-      // submittedAt shows village name
       village: json['villages_name'] ?? json['village_name'] ?? 'N/A',
       status: json['status'] ?? 'pending',
       photo: json['photo'] ?? '',
