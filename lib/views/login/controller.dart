@@ -92,6 +92,7 @@ class LoginController extends GetxController {
         Credential.username.name,
         usernameCtl.text,
       );
+      await SharedPreferencesManager.setValue('name', login.name);
       await SharedPreferencesManager.setValue(
         Credential.password.name,
         passCtl.text,
