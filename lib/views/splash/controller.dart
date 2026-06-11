@@ -40,23 +40,66 @@ class SplashController extends GetxController
     return user_id;
   }
 
+  // Future<void> fetchInit() async {
+  //   // final String token = await SharedPreferencesManager.get(Credential.token.name) ?? '';
+  //   int? branchID = await getbranchId();
+  //   int? userID = await getUserId();
+  //   if (branchID == null && userID == null) {
+  //     Future.delayed(const Duration(seconds: 3)).then((value) {
+  //       controller.stop();
+  //       Get.offAllNamed(Routes.login);
+  //     });
+  //     return;
+  //   } else {
+  //     Future.delayed(const Duration(seconds: 3)).then((value) {
+  //       controller.stop();
+  //       Get.offAllNamed(Routes.start);
+  //     });
+  //   }
+  //   //
+
+  //   try {
+  //     final res = await Get.find<ApiService>().get(
+  //       '${EndPoints.profile}?user_id=$userID',
+  //       isShowLoading: false,
+  //     );
+  //     final data = getPropertyFromJson(res.data, 'data');
+  //     if (data != null) {
+  //       final ProfileModel profile = ProfileModel.fromJson(data);
+  //       UserRepository.shared.setProfile(profile);
+  //       controller.stop();
+  //       Get.offAllNamed(Routes.start);
+  //       return;
+  //     }
+  //     controller.stop();
+  //     Get.offAllNamed(Routes.login);
+  //   } catch (e) {
+  //     if (isClosed) {
+  //       return;
+  //     }
+  //     // restore role from the permission saved at login time
+  //     final savedPermission =
+  //         await SharedPreferencesManager.get(Credential.permission.name) ?? '';
+  //     UserRepository.shared.setUserTypeFromPermission(savedPermission);
+
+  //     controller.stop();
+  //     Get.offAllNamed(Routes.start);
+  //   }
+  // }
   Future<void> fetchInit() async {
-    // final String token = await SharedPreferencesManager.get(Credential.token.name) ?? '';
     int? branchID = await getbranchId();
     int? userID = await getUserId();
+
     if (branchID == null && userID == null) {
-      Future.delayed(const Duration(seconds: 3)).then((value) {
-        controller.stop();
-        Get.offAllNamed(Routes.login);
-      });
+      await Future.delayed(const Duration(seconds: 3));
+      controller.stop();
+      Get.offAllNamed(Routes.login);
       return;
-    } else {
-      Future.delayed(const Duration(seconds: 3)).then((value) {
-        controller.stop();
-        Get.offAllNamed(Routes.start);
-      });
     }
-    //
+
+    // Only one navigation path — no delayed race
+    await Future.delayed(const Duration(seconds: 3));
+    controller.stop();
 
     try {
       final res = await Get.find<ApiService>().get(
@@ -67,23 +110,14 @@ class SplashController extends GetxController
       if (data != null) {
         final ProfileModel profile = ProfileModel.fromJson(data);
         UserRepository.shared.setProfile(profile);
-        controller.stop();
-        Get.offAllNamed(Routes.start);
-        return;
       }
-      controller.stop();
-      Get.offAllNamed(Routes.login);
     } catch (e) {
-      if (isClosed) {
-        return;
-      }
-      // restore role from the permission saved at login time
+      if (isClosed) return;
       final savedPermission =
           await SharedPreferencesManager.get(Credential.permission.name) ?? '';
       UserRepository.shared.setUserTypeFromPermission(savedPermission);
-
-      controller.stop();
-      Get.offAllNamed(Routes.start);
     }
+
+    Get.offAllNamed(Routes.start);
   }
 }
