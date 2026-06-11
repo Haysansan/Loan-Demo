@@ -4,3 +4,6 @@ export 'customer.dart';
 export 'writtenoff.dart';
 export 'paidoff.dart';
 export 'arrear.dart';
+export 'coborrower.dart';
+export 'guarantor.dart';
+export 'shared_coborrower_guarantor.dart';

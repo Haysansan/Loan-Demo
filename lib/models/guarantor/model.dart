@@ -1,21 +1,25 @@
-class IdTypeModel {
+class GuarantorIdTypeModel {
   final String id;
   final String name;
 
-  IdTypeModel({required this.id, required this.name});
+  GuarantorIdTypeModel({required this.id, required this.name});
 
-  factory IdTypeModel.fromJson(Map<String, dynamic> json) =>
-      IdTypeModel(id: json['id'].toString(), name: json['name'] as String);
+  factory GuarantorIdTypeModel.fromJson(Map<String, dynamic> json) =>
+      GuarantorIdTypeModel(
+        id: json['id'].toString(),
+        name: json['name'] as String,
+      );
 
   @override
-  bool operator ==(Object other) => other is IdTypeModel && other.id == id;
+  bool operator ==(Object other) =>
+      other is GuarantorIdTypeModel && other.id == id;
 
   @override
   int get hashCode => id.hashCode;
 }
 
 class GuarantorModel {
-  final String fullName;
+  final String fullname;
   final String? dateOfBirth;
   final String? gender;
   final String phoneNumber;
@@ -24,7 +28,7 @@ class GuarantorModel {
   final String relationship;
 
   GuarantorModel({
-    required this.fullName,
+    required this.fullname,
     this.dateOfBirth,
     this.gender,
     required this.phoneNumber,
@@ -34,12 +38,12 @@ class GuarantorModel {
   });
 
   Map<String, dynamic> toJson() => {
-    'full_name': fullName,
-    'date_of_birth': dateOfBirth,
-    'gender': gender,
-    'phone_number': phoneNumber,
-    'id_type_id': idTypeId,
-    'national_id': nationalId,
-    'relationship': relationship,
+    'gu_first_name': fullname,
+    'gu_dob': dateOfBirth,
+    'gu_gender': gender,
+    'gu_mobile': phoneNumber,
+    'gu_client_identification_type_id': idTypeId,
+    'gu_external_id': nationalId,
+    'gu_client_relationship_id': relationship,
   };
 }

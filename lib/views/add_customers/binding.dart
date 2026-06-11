@@ -5,5 +5,7 @@ class AddCustomersBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<AddCustomersController>(() => AddCustomersController());
+    Get.lazyPut<CoBorrowerController>(() => CoBorrowerController());
+    Get.lazyPut<GuarantorController>(() => GuarantorController());
   }
 }
