@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:apploan/core/core.dart';
 import 'package:get/get.dart';
-import 'dart:math' as math;
 import 'package:intl/intl.dart';
+import 'dart:math' as math;
+
+enum SummaryCardMode { totalRepayment, collectedUncollected }
 
 class CustomSummaryCard extends StatelessWidget {
+  final SummaryCardMode mode;
   final int collectedClients;
   final int totalClients;
   final double totalRepaymentUsd;
@@ -14,6 +17,7 @@ class CustomSummaryCard extends StatelessWidget {
 
   const CustomSummaryCard({
     Key? key,
+    required this.mode,
     required this.collectedClients,
     required this.totalClients,
     required this.totalRepaymentUsd,
@@ -29,10 +33,10 @@ class CustomSummaryCard extends StatelessWidget {
 
   String get _percentageLabel => '${(_percentage * 100).toStringAsFixed(0)}%';
 
-  String _toKhr(double usd) {
-    final khr = usd * exchangeRate;
-    return '${NumberFormat('#,##0.00').format(khr)}៛';
-  }
+  String _toKhr(double usd) =>
+      '${NumberFormat('#,##0.00').format(usd * exchangeRate)}៛';
+
+  String _toUsd(double usd) => '\$${NumberFormat('#,##0.00').format(usd)}';
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +49,11 @@ class CustomSummaryCard extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFFFF0000).withValues(alpha: 0.55),
-              Color(0xFFFF8386),
-              Color(0xFFFF0000).withValues(alpha: 0.55),
+              const Color(0xFFFF0000).withValues(alpha: 0.55),
+              const Color(0xFFFF8386),
+              const Color(0xFFFF0000).withValues(alpha: 0.55),
             ],
-            stops: [0.0, 0.51, 0.92],
+            stops: const [0.0, 0.51, 0.92],
           ),
           boxShadow: [
             BoxShadow(
@@ -68,21 +72,7 @@ class CustomSummaryCard extends StatelessWidget {
             children: [
               _buildCircularProgress(),
               const SizedBox(width: 16),
-              Container(
-                width: 1,
-                height: 130,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.white.withOpacity(0.0),
-                      Colors.white.withOpacity(0.5),
-                      Colors.white.withOpacity(0.0),
-                    ],
-                  ),
-                ),
-              ),
+              _buildDivider(vertical: true, length: 130),
               const SizedBox(width: 16),
               Expanded(child: _buildRightSection()),
             ],
@@ -135,13 +125,17 @@ class CustomSummaryCard extends StatelessWidget {
   }
 
   Widget _buildRightSection() {
-    final uncollectedUsd = totalRepaymentUsd - collectedUsd;
+    final bool hasData = totalClients > 0;
+    final clientsLabel =
+        hasData
+            ? '${collectedClients.toString().padLeft(2, '0')}/${totalClients.toString().padLeft(2, '0')}'
+            : '0';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Clients row
+        // Clients row — shared
         InkWell(
           onTap: onClientsTap,
           child: Row(
@@ -176,7 +170,7 @@ class CustomSummaryCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${collectedClients.toString().padLeft(2, '0')}/${totalClients.toString().padLeft(2, '0')}',
+                    clientsLabel,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -193,23 +187,53 @@ class CustomSummaryCard extends StatelessWidget {
         ),
 
         const SizedBox(height: 10),
-        _buildDivider(),
+        _buildDivider(vertical: false),
         const SizedBox(height: 10),
 
-        // Collected row
-        _buildAmountRow(LocaleKeys.collected.tr, _toKhr(collectedUsd)),
-
-        const SizedBox(height: 10),
-        _buildDivider(),
-        const SizedBox(height: 10),
-
-        // Un-Collected row
-        _buildAmountRow(LocaleKeys.unCollected.tr, _toKhr(uncollectedUsd)),
+        // Bottom half — differs by mode
+        if (mode == SummaryCardMode.totalRepayment)
+          _buildTotalRepaymentSection()
+        else
+          _buildCollectedUncollectedSection(),
       ],
     );
   }
 
-  Widget _buildAmountRow(String label, String amount) {
+  // Mode A: Total Repayment (USD + KHR)
+  Widget _buildTotalRepaymentSection() {
+    return _buildAmountRow(
+      label: LocaleKeys.totalRepayment.tr,
+      primary: _toUsd(totalRepaymentUsd),
+      secondary: _toKhr(totalRepaymentUsd),
+    );
+  }
+
+  // Mode B: Collected + Un-Collected (KHR only)
+  Widget _buildCollectedUncollectedSection() {
+    final uncollectedUsd = totalRepaymentUsd - collectedUsd;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildAmountRow(
+          label: LocaleKeys.collected.tr,
+          primary: _toKhr(collectedUsd),
+        ),
+        const SizedBox(height: 10),
+        _buildDivider(vertical: false),
+        const SizedBox(height: 10),
+        _buildAmountRow(
+          label: LocaleKeys.unCollected.tr,
+          primary: _toKhr(uncollectedUsd),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAmountRow({
+    required String label,
+    required String primary,
+    String? secondary,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -222,7 +246,7 @@ class CustomSummaryCard extends StatelessWidget {
           ),
         ),
         Text(
-          amount,
+          primary,
           style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -230,18 +254,33 @@ class CustomSummaryCard extends StatelessWidget {
             height: 1.1,
           ),
         ),
+        if (secondary != null)
+          Text(
+            secondary,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.8),
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
       ],
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider({
+    required bool vertical,
+    double length = double.infinity,
+  }) {
     return Container(
-      height: 1,
+      width: vertical ? 1 : length,
+      height: vertical ? length : 1,
       decoration: BoxDecoration(
         gradient: LinearGradient(
+          begin: vertical ? Alignment.topCenter : Alignment.centerLeft,
+          end: vertical ? Alignment.bottomCenter : Alignment.centerRight,
           colors: [
             Colors.white.withOpacity(0.0),
-            Colors.white.withOpacity(0.4),
+            Colors.white.withOpacity(0.5),
             Colors.white.withOpacity(0.0),
           ],
         ),
@@ -262,35 +301,29 @@ class _ArcPainter extends CustomPainter {
     const startAngle = math.pi * 0.25;
     const sweepTotal = math.pi * 1.5;
 
-    final bgPaint =
-        Paint()
-          ..color = Colors.white.withOpacity(0.3)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = strokeWidth
-          ..strokeCap = StrokeCap.round;
-
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       startAngle,
       sweepTotal,
       false,
-      bgPaint,
+      Paint()
+        ..color = Colors.white.withOpacity(0.3)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth
+        ..strokeCap = StrokeCap.round,
     );
 
     if (progress > 0) {
-      final progressPaint =
-          Paint()
-            ..color = Colors.green
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = strokeWidth
-            ..strokeCap = StrokeCap.round;
-
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
         startAngle,
         sweepTotal * progress,
         false,
-        progressPaint,
+        Paint()
+          ..color = Colors.green
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth
+          ..strokeCap = StrokeCap.round,
       );
     }
   }
@@ -298,3 +331,26 @@ class _ArcPainter extends CustomPainter {
   @override
   bool shouldRepaint(_ArcPainter old) => old.progress != progress;
 }
+
+// how to call and use on other views 
+// total repayment
+// CustomSummaryCard(
+//   mode: SummaryCardMode.totalRepayment,
+//   collectedClients: 0, // placeholder until backend ready
+//   totalClients: controller.clientCount,
+//   totalRepaymentUsd: controller.totalRepaymentUsd,
+//   collectedUsd: controller.collectedUsd,
+//   exchangeRate: controller.exchangeRate,
+//   onClientsTap: ...,
+// )
+
+// collected / un-collected
+// CustomSummaryCard(
+//   mode: SummaryCardMode.collectedUncollected,
+//   collectedClients: controller.collectedClients,
+//   totalClients: controller.totalClients,
+//   totalRepaymentUsd: controller.totalRepaymentUsd,
+//   collectedUsd: controller.collectedUsd,
+//   exchangeRate: controller.exchangeRate,
+//   onClientsTap: ...,
+// )

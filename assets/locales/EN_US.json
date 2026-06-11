@@ -229,5 +229,6 @@
   "verifyLoan": "Verify Loans",
   "disburseLoan": "Disburse Loans",
   "collected": "Collected",
-  "unCollected": "Uncollected"
+  "unCollected": "Uncollected",
+  "received": "Received"
 }

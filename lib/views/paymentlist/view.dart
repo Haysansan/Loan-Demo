@@ -1,3 +1,4 @@
+import 'package:apploan/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:apploan/core/core.dart';
@@ -33,21 +34,22 @@ class PaymentCollectionView extends GetView<PaymentListController> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-              child: TotalPackageWidget(
-                icon: Icons.people_alt,
-                packages:
-                    '${controller.totalClient.text} ${LocaleKeys.clients.tr}',
+            const SizedBox(height: 12),
+            Obx(
+              () => CustomSummaryCard(
+                mode: SummaryCardMode.collectedUncollected,
+                collectedClients:
+                    controller.collectedClients.value, // 0 until backend ready
+                totalClients: int.tryParse(controller.totalClient.text) ?? 0,
+                totalRepaymentUsd: controller.totalRepaymentRaw.value,
+                collectedUsd: controller.collectedSumRaw.value,
+                exchangeRate: controller.exchangeRate.value,
+                onClientsTap: () => Get.toNamed(Routes.customers),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: TotalIncomeWidget(codKhr: controller.totalAmount.text),
-            ),
-            UIConstants.spacing.height,
+            const SizedBox(height: 10),
 
-            // Search
+            // Search — unchanged
             Padding(
               padding: UIConstants.spacing.padHorizontal,
               child: Row(
