@@ -9,17 +9,17 @@ class DashboardWidget extends StatelessWidget {
   @override
   List catName = [
     // LocaleKeys.loanCalculator.tr,
+    LocaleKeys.customers.tr,
     LocaleKeys.loanDisbursments.tr,
     LocaleKeys.repaymentLoan.tr,
-    LocaleKeys.areaLoan.tr,
-    LocaleKeys.customers.tr,
-    LocaleKeys.writtenoff.tr,
     LocaleKeys.prepaid.tr,
-    LocaleKeys.payforearchother.tr,
     LocaleKeys.datasync.tr,
-    LocaleKeys.datatransfer.tr,
-    LocaleKeys.deno.tr,
+    LocaleKeys.areaLoan.tr,
+    LocaleKeys.writtenoff.tr,
     LocaleKeys.approveLoans.tr,
+    LocaleKeys.datatransfer.tr,
+    // LocaleKeys.payforearchother.tr,
+    // LocaleKeys.deno.tr,
   ];
   List<Color> catColors = [
     // Color(0xFF5DAFF1),
@@ -45,17 +45,17 @@ class DashboardWidget extends StatelessWidget {
 
   final List<Widget> catIcons = [
     // Image.asset('assets/images/icon/calculator.png', width: 30, height: 30),
+    Image.asset('assets/images/icon/customer.png', width: 30, height: 30),
     Image.asset('assets/images/icon/disburme.png', width: 35, height: 35),
-    Image.asset('assets/images/icon/repayment.png', width: 35, height: 35),
-    Image.asset('assets/images/icon/arrear.png', width: 35, height: 35),
-    Image.asset('assets/images/icon/customer.png', width: 35, height: 35),
-    Image.asset('assets/images/icon/writtenoff.png', width: 40, height: 40),
-    Image.asset('assets/images/icon/prepaid.png', width: 35, height: 35),
-    Image.asset('assets/images/icon/paidofother.png', width: 35, height: 35),
-    Image.asset('assets/images/icon/sync.png', width: 35, height: 35),
-    Image.asset('assets/images/icon/transfer.png', width: 35, height: 35),
-    Image.asset('assets/images/icon/transfer.png', width: 35, height: 35),
-    Image.asset('assets/images/icon/repayment.png', width: 35, height: 35),
+    Image.asset('assets/images/icon/repayment.png', width: 30, height: 30),
+    Image.asset('assets/images/icon/prepaid.png', width: 30, height: 30),
+    Image.asset('assets/images/icon/sync.png', width: 30, height: 30),
+    Image.asset('assets/images/icon/arrear.png', width: 30, height: 30),
+    Image.asset('assets/images/icon/writtenoff.png', width: 45, height: 45),
+    Image.asset('assets/images/icon/repayment.png', width: 30, height: 30),
+    Image.asset('assets/images/icon/transfer.png', width: 30, height: 30),
+    // Image.asset('assets/images/icon/transfer.png', width: 35, height: 35),
+    // Image.asset('assets/images/icon/paidofother.png', width: 35, height: 35),
   ];
   List getReport = ["អតិថិជនបានបង់", "អតិថិជនមិនបានបង់", "អតិថិជនត្រូវប្រមូល"];
 
@@ -73,7 +73,7 @@ class DashboardWidget extends StatelessWidget {
   ];
 
   // BM / CEO only see these key indices
-  static const _bmCeoIndices = [3, 6, 2, 10, 7, 8];
+  static const _bmCeoIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
   (List catNames, List<Color> catColors, List<Widget> catIcons)
   _buildFilteredLists() {
@@ -89,7 +89,7 @@ class DashboardWidget extends StatelessWidget {
 
     // CO:
     if (user.isCO) {
-      const coIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // skip 10
+      const coIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8]; // skip 10
       final names = coIndices.map((i) => catName[i]).toList();
       final colors = coIndices.map((i) => catColors[i]).toList();
       final icons = coIndices.map((i) => catIcons[i]).toList();
@@ -151,10 +151,10 @@ class DashboardWidget extends StatelessWidget {
     Get.toNamed(Routes.customers);
   }
 
-  void moneyCount() {
-    Get.back();
-    Get.toNamed(Routes.dino);
-  }
+  // void moneyCount() {
+  //   Get.back();
+  //   Get.toNamed(Routes.dino);
+  // }
 
   void Approval() {
     Get.back();
@@ -199,7 +199,7 @@ class DashboardWidget extends StatelessWidget {
                         physics: NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
-                          childAspectRatio: 1.2,
+                          childAspectRatio: 1.3,
                         ),
                         itemBuilder: (context, index) {
                           // For future use: if some features are coming soon, we can disable them here based on their index or name
@@ -207,42 +207,53 @@ class DashboardWidget extends StatelessWidget {
                           //     catNames[index] == LocaleKeys.prepaid.tr;
                           final isComingSoon =
                               false; //right now no unavailable features]
+                          // for icon restriction
+                          final isRestricted =
+                              catNames[index] == LocaleKeys.approveLoans.tr &&
+                              UserRepository.shared.isCO;
                           return InkWell(
                             onTap: () {
-                              if (catNames[index] ==
-                                  LocaleKeys.loanDisbursments.tr) {
-                                LoanDisbursmentsHandleTap();
-                              } else if (catNames[index] ==
-                                  LocaleKeys.areaLoan.tr) {
-                                AreaLoanHandleTap();
-                              } else if (catNames[index] ==
-                                  LocaleKeys.customers.tr) {
+                              if (catNames[index] == LocaleKeys.customers.tr) {
                                 CustomersHandleTap();
                               } else if (catNames[index] ==
-                                  LocaleKeys.payforearchother.tr) {
-                                PayForEeachOtherHandleTap();
+                                  LocaleKeys.loanDisbursments.tr) {
+                                LoanDisbursmentsHandleTap();
                               } else if (catNames[index] ==
                                   LocaleKeys.repaymentLoan.tr) {
                                 RepaymentHandleTap();
                               } else if (catNames[index] ==
-                                  LocaleKeys.datasync.tr) {
-                                SyncDataHandleTap();
-                              } else if (catNames[index] ==
-                                  LocaleKeys.datatransfer.tr) {
-                                TransferDataHandleTap();
-                              } else if (catNames[index] ==
                                   LocaleKeys.prepaid.tr) {
                                 PrePaidHandleTap();
                               } else if (catNames[index] ==
-                                  LocaleKeys.deno.tr) {
-                                moneyCount();
+                                  LocaleKeys.datasync.tr) {
+                                SyncDataHandleTap();
+                              } else if (catNames[index] ==
+                                  LocaleKeys.areaLoan.tr) {
+                                AreaLoanHandleTap();
                               } else if (catNames[index] ==
                                   LocaleKeys.writtenoff.tr) {
                                 WrittenOffHandleTap();
                               } else if (catNames[index] ==
                                   LocaleKeys.approveLoans.tr) {
+                                if (UserRepository.shared.isCO) {
+                                  DialogManager.showDialog(
+                                    title: "Access Denied",
+                                    subTitle:
+                                        "This feature is not available for COs.",
+                                  );
+                                  return;
+                                }
+
                                 Approval();
-                              } else {
+                              } else if (catNames[index] ==
+                                  LocaleKeys.datatransfer.tr) {
+                                TransferDataHandleTap();
+                              }
+                              // else if (catNames[index] ==
+                              //     LocaleKeys.deno.tr) {
+                              //   moneyCount();
+                              // }
+                              else {
                                 DialogManager.showDialog(
                                   title: LocaleKeys.commingSoon.tr,
                                   subTitle: LocaleKeys.futureUpdate.tr,
@@ -256,12 +267,29 @@ class DashboardWidget extends StatelessWidget {
                                     clipBehavior: Clip.none,
                                     children: [
                                       Container(
-                                        height: 60,
-                                        width: 60,
+                                        height: 55,
+                                        width: 55,
                                         decoration: BoxDecoration(
                                           color:
                                               isComingSoon
                                                   ? const Color(0xFFA88787)
+                                                  : catColors[index],
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(child: catIcons[index]),
+                                      ),
+                                      Container(
+                                        height: 55,
+                                        width: 55,
+                                        decoration: BoxDecoration(
+                                          color:
+                                              isRestricted
+                                                  ? const Color.fromARGB(
+                                                    255,
+                                                    255,
+                                                    184,
+                                                    184,
+                                                  )
                                                   : catColors[index],
                                           shape: BoxShape.circle,
                                         ),

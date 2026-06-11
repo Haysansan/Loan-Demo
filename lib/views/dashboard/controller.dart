@@ -1,3 +1,4 @@
+import 'package:apploan/core/offline/database_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,8 @@ class DashboardController extends GetxController {
 
   final Rxn<DashboardModel> dashboardModel = Rxn<DashboardModel>();
   final RxBool isLoading = false.obs;
+  final RxString userName = ''.obs;
+  final RxBool hasSyncedData = false.obs;
 
   final ReasonController reasonCtl = Get.find<ReasonController>();
   final StartController startCtl = Get.find<StartController>();
@@ -19,6 +22,29 @@ class DashboardController extends GetxController {
 
   // For pending approval count
   final RxInt pendingApprovalCount = 0.obs;
+
+  // for summary card
+  final RxInt activeCOCount = 0.obs;
+  final RxInt overdueCOCount = 0.obs;
+  final RxString loanOutstanding = '\$0.00'.obs;
+  final RxString overdueAmountStr = '\$0.00'.obs;
+  final RxInt collectedCOCount = 0.obs;
+  final RxString totalToCollect = '\$0.00'.obs;
+  final RxString totalCollected = '\$0.00'.obs;
+  final RxString totalToCollectKhr = '0៛'.obs;
+  final RxString totalCollectedKhr = '0៛'.obs;
+  final RxDouble collectedSum = 0.0.obs;
+  final RxDouble totalRepaymentSum = 0.0.obs;
+  final RxDouble exchangeRate = 4100.0.obs;
+
+  // ── Format helpers ───
+  String _formatUsd(double amount) {
+    return '\$${NumberFormat('#,##0.00').format(amount)}';
+  }
+
+  String _formatKhr(double amount) {
+    return '${NumberFormat('#,###').format(amount)}៛';
+  }
 
   DatePicker getDatePicker() {
     final DatePicker startPicker = DatePicker(
@@ -52,6 +78,66 @@ class DashboardController extends GetxController {
   void onClose() {
     dateCtl.dispose();
     super.onClose();
+  }
+
+  // ── Load user name from SharedPreferences ───
+  Future<void> _loadUserName() async {
+    try {
+      final raw = await SharedPreferencesManager.get('user_name');
+      final name = raw?.toString() ?? '';
+      userName.value = name.isNotEmpty ? name : 'User';
+    } catch (_) {
+      userName.value = 'User';
+    }
+  }
+
+  Future<void> fetchSummaryAmounts() async {
+    try {
+      final List<RepaymentModel> toCollectRows = await DatabaseHelper.instance
+          .queryAllRowsRepayments(1);
+
+      hasSyncedData.value = toCollectRows.isNotEmpty;
+      if (!hasSyncedData.value) return;
+
+      final double rate = exchangeRate.value;
+
+      // Plan totals — sum of total_repayment (stored in KHR)
+      final double toCollectSum = toCollectRows.fold(
+        0.0,
+        (prev, item) => prev + (double.tryParse(item.total_repayment) ?? 0.0),
+      );
+
+      // Overdue — rows where arrears (arrea) > 0
+      final List<RepaymentModel> overdueRows =
+          toCollectRows
+              .where((item) => (double.tryParse(item.arrea) ?? 0.0) > 0)
+              .toList();
+      final double overdueSum = overdueRows.fold(
+        0.0,
+        (prev, item) => prev + (double.tryParse(item.total_repayment) ?? 0.0),
+      );
+
+      // Collected
+      final List<PaymentModel> collectedRows =
+          await DatabaseHelper.instance.queryAllRowsCollected();
+      final double collected = collectedRows.fold(
+        0.0,
+        (prev, item) => prev + (double.tryParse(item.total_repayment) ?? 0.0),
+      );
+
+      activeCOCount.value = toCollectRows.length;
+      overdueCOCount.value = overdueRows.length;
+      loanOutstanding.value = _formatUsd(toCollectSum / rate);
+      overdueAmountStr.value = _formatUsd(overdueSum / rate);
+      collectedCOCount.value = collectedRows.length;
+
+      totalRepaymentSum.value = toCollectSum;
+      collectedSum.value = collected;
+      totalToCollect.value = _formatUsd(toCollectSum / rate);
+      totalCollected.value = _formatUsd(collected / rate);
+      totalToCollectKhr.value = _formatKhr(toCollectSum);
+      totalCollectedKhr.value = _formatKhr(collected);
+    } catch (_) {}
   }
 
   Future<void> fetchPendingApprovalCount() async {
